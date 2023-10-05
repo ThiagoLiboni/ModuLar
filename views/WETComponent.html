@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="PT-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../public/css/style.css">
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600&family=Moon+Dance&family=Roboto:wght@100&display=swap" rel="stylesheet">
+    
+    <title>LiboniProject</title>
+</head>
+<body>
+    <form>
+        <div class="input">
+            <input name="input" type="text" placeholder="Nome" id="name_project">
+            <input name='input' type="text" placeholder="Descrição" id="Description">
+            <input name="input" type="url" placeholder="URL logo" id="img_URL">
+            <input name="input" type="url" placeholder="URL projeto" id="project_URL">
+            <input name="input" type="text" placeholder="ID" id="project_ID">
+        </div>
+        <button type="button" id="newComponent">Registrar</button>
+        <button type="button" id="RemoveComponent">Remover</button>
+        
+        </form>
+   <header>
+    <div class="container-logo">
+        <div class="logo-imagem"><img src="../public/src/M__1_-removebg-preview (6).png" title="logo" ></div>
+        </div>
+       <div class="boxMenu">
+       <div class="menu">
+            <div class="content">
+                <button class="Home" id="buttonHome" type="button">Início</button>
+                <div class="spt-1">|</div>
+                <button class="Comp" id="buttonComp" type="button">Componentes</button>
+                <div class="spt-2">|</div>
+                <button class="Materiais" id="buttonMaterials" type="button">Material</button>                              
+            </div>
+        </div>
+        <div class="componentesList">                
+             <div id="lista" class="Hidden">
+                    <button class="Item1" id="item1">Quarto & Sala</button>
+                    <button class="Item2" id="item2">Cozinha & Banheiro</button> 
+            </div>
+        </div>
+        </div>
+        <div class="transition-Start-3 IconMenu" ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="18" hiegth="18"><!--! Font Awesome Pro 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>
+        </div>
+    
+    </header>
+
+    <!------------------------------------------->
+    
+    
+    <div class="componentList"> 
+        <button type="button" id="deletar" style="display: none">Deletar</button>
+     <!--   <div class="item" id="ID_0">
+            
+            <img src="src/M-removebg-preview (1).png" id='ID_00' title="icon" name="logo">
+            <input type="checkbox" name="" id="validar">
+            
+            <div id="infoComponent">
+                <div id="nomeComponent">GABINETE</div>
+                <div id="info-box">InfoComponente askjfbaskfb akffbafkba dscbdscsd dfbdsjs</div>
+            </div>-->
+            
+        </div>
+        <div><button type="button" id="Save">Salvar</button></div>
+        
+        
+        
+        
+    </div>
+    <!--<div class="A_dry" >Quarto & Sala</div>-->
+    <div class="A_wet" >Cozinha & Banheiro</div>    
+    
+    
+
+    
+
+      
+
+
+
+
+
+
+
+    
+    <script type="module" src="../js/auth.js"></script>
+    <script type="module" src="../js/storage.js"></script>
+    <script type="module" src="../js/index.js"></script>
+</body>
+
+
+</script>
+</html>

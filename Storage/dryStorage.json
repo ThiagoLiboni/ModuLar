@@ -1,0 +1,17 @@
+[
+  {
+    "Nome": "GAB.INF-2P",
+    "Descrição": "Gabinete inferior com 2 portas articuladas.",
+    "Url": "https://firebasestorage.googleapis.com/v0/b/modularplugin.appspot.com/o/comp_inferior%2FGab%20INF%20-%202P.skp?alt=media&token=6e2167d6-4041-4683-9dbe-45cc87b81730",
+    "img": "../public/src/Miniatura/Gab2P.PNG",
+    "id": "01"
+  },
+
+  {
+    "Nome": "GAB.INF-4G",
+    "Descrição": "Gabinete inferior com 4 gavetas.",
+    "Url": "https://firebasestorage.googleapis.com/v0/b/modularplugin.appspot.com/o/comp_inferior%2FGab%20INF%20-%204G.skp?alt=media&token=81f9c4ee-c4a1-4dab-9c9c-677835392ca3",
+    "img": "../public/src/Miniatura/Gab4G.PNG",
+    "id": "02"
+  }
+]

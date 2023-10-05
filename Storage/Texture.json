@@ -1,0 +1,66 @@
+[
+    {
+        "nome": "Alamo",
+        "categoria": "Essencial Wood",
+        "id": "Alamo",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Essencial Wood/Alamo.PNG"
+    },
+
+    {
+        "nome": "Hong_Kong",
+        "categoria": "Conceito",
+        "id": "Hong_Kong",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Conceito/Hong_Kong.PNG"
+    },
+  
+    {
+        "nome": "Bolero",
+        "categoria": "Conceito",
+        "id": "Bolero",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Conceito/Bolero.PNG"
+    },
+      
+
+    {
+        "nome": "Carvalho_Hanover",
+        "categoria": "Design",
+        "id": "Carvalho_Hanover",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Design/Carvalho_Hanover.PNG"
+    },
+    {
+        "nome": "Carvalho_Munique",
+        "categoria": "Design",
+        "id": "Carvalho_Munique",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Design/Carvalho_Munique.PNG"
+    },
+    {
+        "nome": "Brise",
+        "categoria": "Design",
+        "id": "Brise",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Design/Brise.PNG"
+    },
+    {
+        "nome": "Absoluto",
+        "categoria": "Design",
+        "id": "Absoluto",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Design/Absoluto.PNG"
+    },
+    {
+        "nome": "Metropole",
+        "categoria": "Design",
+        "id": "Metropole",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Design/Metropole.PNG"
+    },
+    {
+        "nome": "Nogueira_Thar",
+        "categoria": "Design",
+        "id": "Nogueira_Thar",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Design/Nogueira_Thar.PNG"
+    },
+    {
+        "nome": "Maranta",
+        "categoria": "Design",
+        "id": "Maranta",
+        "url": "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Plugins/su_modular/public/src/Texture/Duratex/Design/Maranta.PNG"
+    }
+]

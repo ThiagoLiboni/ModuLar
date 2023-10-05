@@ -1,0 +1,96 @@
+﻿body, html {
+    width: 99%;
+    
+    background-color: rgb(0, 0, 0);
+    background-image: url('../src/concrect.png');
+
+    opacity: 80%
+
+}
+
+.login-box{
+    position: relative;
+    top: 100px;
+    
+    
+    width: 400px;
+    height: 400px;
+    display: flex;
+    background-color: rgb(252, 252, 252);
+    border: 1px solid black;
+    margin: 0 auto;
+
+}
+
+
+form{
+    position: relative;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 300px;
+    margin: 0% auto;
+    top: 50px;
+    justify-content: space-around;
+    background-color: rgb(196, 196, 196);
+    color: rgb(255, 255, 255);
+
+}
+
+
+form #nome{
+    background-color: unset;
+    border: none;
+    border-bottom: 1px solid black;
+    margin-left: 10px;
+    width: 250px;
+    
+
+}
+form #email{
+    background-color: unset;
+    border: none;
+    border-bottom: 1px solid black;
+    margin-left: 10px;
+    width: 250px;
+    
+
+}
+form #password{
+    background-color: unset;
+    border: none;
+    border-bottom: 1px solid black;
+    color: black;
+    margin-left: 10px;
+    width: 250px;
+   
+
+}
+
+form label{
+    color: black;
+    background-color: unset;
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 10px;
+    font-size: 26px;
+    
+}
+
+#login{
+    background-color: unset;
+    width: 50%;
+    height: 30px;
+    margin: 30px;
+    
+}
+
+#alerta{
+    color: red;
+    background-color: unset;
+    font-size: 9px;
+    display: none;
+    position: absolute;
+    bottom: 5px;
+}
