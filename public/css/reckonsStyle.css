@@ -1,0 +1,85 @@
+body,html{
+    background-color: rgb(94, 93, 93);
+    display: flex;
+    flex-direction: column;
+
+   
+   
+}
+
+
+.logo{
+    background-color: white;
+    position: relative;
+    width: 90vw;
+    height: 50vh;
+    margin: 3% auto 5% auto;
+
+
+    
+}
+
+.tarefas{
+    background-color: rgb(140, 127, 255);
+    position: relative;
+    width: 90vw;
+    height: 20vh;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    
+}
+
+#opcoes{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: auto;
+    width: 90%;
+    height: 30%;
+}
+
+button{
+    height: 10vh;
+    width: 20vw;
+    font-size: 1em;
+    min-width: 130px;
+}
+
+.container{
+    background-color: white;
+    position: relative;
+    width: 90vw;
+    height: 80vh;
+    border: 1px solid black;
+    margin: 25px auto;
+    padding: 8px 10px;
+    display: flex;
+}
+
+#cutBoard{
+    display: flex;
+    width: 80%;
+    border: 1px solid black;
+    margin-bottom: 6%;
+}
+
+#infBoard{
+    width: 20%;
+    
+    border: 1px solid black;
+    border-left: none;
+    margin-bottom: 6%;
+    
+}
+
+.dashed{
+    
+}
+
+.Section{
+    display: flex;
+    position: relative;
+   
+}

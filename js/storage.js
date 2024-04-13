@@ -3,9 +3,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
 import {  getStorage, ref, updateMetadata, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-storage.js";
 import {componenteData, adicionarObservador} from "./index.js"
-import {Bridge} from './bridge.js'
+
 
 import { sendToRuby } from "./middle.js";
+
 
 
 
@@ -34,7 +35,7 @@ function ObserverData (){
       adicionarObservador(ObserverData);}
       
       let currentID = null
-      const destino =  "C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Components"
+      const destino =  `C:/Users/Liboni/AppData/Roaming/SketchUp/SketchUp 2022/SketchUp/Components`
       
       window.rubyBridge = {
         call: function (methodName, parameter){

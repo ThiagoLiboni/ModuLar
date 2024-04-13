@@ -1,7 +1,7 @@
 ﻿* body, html{
     padding: 0;
     margin: 0;
-    background-color: rgb(177, 189, 157);
+    background-color: rgb(223, 232, 245);
     
     
 }
@@ -13,7 +13,8 @@
 header{
     width: 100%;
     
-    background-image: url('../src/concrect.png');
+    background-image: url('../src/texture.PNG');
+    background-size: contain;
     height: 80px;
     display: flex;
     border-bottom: 1px solid black;
@@ -35,10 +36,11 @@ header .container-logo{
 header .container-logo .logo-imagem{
     
     position: relative;
-    top: -20px;
-    height: auto;
-    width: 60%;
+    top: 10px;
+    height: 70px;
+    width: 70px;
     background-color: unset;
+    margin-left: 10px;
     
 }
 
@@ -48,8 +50,8 @@ header .container-logo .logo-imagem img{
     position: relative;
     
     
-    height: 120px;
-    width: 150px;
+    height: 100%;
+    width: 100%;
     background-color: unset;
 }
 .boxMenu{
@@ -212,7 +214,7 @@ header .container-logo .logo-imagem img{
         #buttonComp:hover,#buttonHome:hover,
          #buttonMaterials:hover,#item1:hover,#item2:hover{
             color: white;
-            background-color:darkolivegreen
+            background-color:rgb(20, 63, 145);
         }
 
     .iconActiveCompList{
@@ -382,7 +384,7 @@ header .container-logo .logo-imagem img{
 .welcome h1 {
     position: relative;
     font-size: 50px;
-    margin: 0 auto;
+    margin: 0px auto;
 }
 
 .welcome h4{
@@ -410,7 +412,7 @@ header .container-logo .logo-imagem img{
         font-size: 14px;
         height: 20px;
         border-bottom: 2px solid rgba(32, 32, 32, 0.315);
-        margin: 0 ;
+        margin-top: -10px ;
         left: 0;
         min-width: 300px;
     }
@@ -528,14 +530,12 @@ margin: auto 30px;
 
 .componentList{
     height: auto;
-    margin-bottom: 30px;
-    bottom: 30px;
     display: flex;
     flex-direction: column;
     width: auto;
     position: absolute;
     z-index: -1;
-    top: 280px;
+    top: 250px;
     left: 40px;
 
 }

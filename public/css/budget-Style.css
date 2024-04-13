@@ -1,0 +1,71 @@
+body{
+    padding: 5% 1%;
+}
+#main{
+    width: 100vw;
+    height: 85vh;
+    margin: 0;
+    display: flex;
+    max-width: 100%;
+}
+#menu{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 25%;
+    height: 100%;
+    border-right: 1px solid rgba(87, 87, 87, 0.616);
+    padding-right: 10px;
+}
+
+#table-project{
+    border-collapse: collapse;
+    width: 100%;
+    margin-left: 30px;
+    margin-top: 20px;
+
+}
+table{
+    width: 100%;
+}
+
+.tr_{
+    width: 100%;
+}
+
+.th_ {
+    border: 1px solid black;
+    padding: 2px;
+    text-align: left;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 12px;
+    
+}
+
+th {
+    background-color: #aaaaaa;
+}
+
+.th_n{width:6%}
+.th_p{width:16%}
+.th_c{width:20%}
+.th_data{width:13%}
+.th_s{width:10%}
+.th_v{width:15%}
+.th_PDF{width:20%}
+
+
+.td_{
+    border-collapse: collapse ;
+    border: 1px solid black;
+    text-align: center;
+}
+.td_crud{
+    margin: 0 5px;
+}
+.td_crud:hover{
+    cursor: pointer;
+    color: blue;
+   
+}

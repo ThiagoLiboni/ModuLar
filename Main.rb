@@ -4,6 +4,7 @@ require 'extensions.rb'
 require 'json'
 require 'ostruct'
 require 'bridge.rb'
+require 'csv'
 
 
 
@@ -12,13 +13,105 @@ require 'bridge.rb'
 
 module Modular
   module Main
+    
+    
+    class ComponentObserver < Sketchup::SelectionObserver
+      def onSelectionBulkChange(selection)
+        selection.each do |component|
+          process_component(component)
+          process_internal_components(component)
+          end
+          Modular::Main.deselection if selection.empty?
+      end
+      
+      def onSelectionCleared(selection)
+        Modular::Main.deselection
+      end
+      
+      def process_component(component)
+        return unless component.is_a?(Sketchup::ComponentInstance) # Verifica se é um componente
+        definition_name = component.definition.name
+        return unless definition_name.start_with?("Piso_", "Lateral_", "Teto_") # Verifica se o nome da definição corresponde a um dos valores desejados
+        Modular::Main.get_measure(component)
+      end
+      
+      def process_internal_components(component)
+        component.definition.entities.each do |entity|
+          next unless entity.is_a?(Sketchup::ComponentInstance)
+          process_component(entity)
+        end
+      end
+    end
+    
+    @@dados = []
+    @@path = ""
+    def self.add_selection_observer
+      observer = Modular::Main::ComponentObserver.new
+      Sketchup.active_model.selection.add_observer(observer)
+      
+    end
+    # obtem as dimesões de componentes selecionado
+    def self.get_measure(component)
+         
+            bounds = component.bounds  
+            
+            # Calcula o tamanho do componente nas direções x, y e z
+            elemento = component.name
+            comprimento = bounds.width
+            largura = bounds.height
+            espessura = bounds.depth
+            parametro = [comprimento, largura, espessura]
+            parametro = parametro.sort
+
+            espessura_final = parametro[0]  
+            comprimento_final = parametro[-1]
+            largura_final = parametro[1]
+
+            # Imprime as dimensões
+            puts "Dimensões do componente: #{elemento}"
+            puts "Comprimento: #{comprimento_final}"
+            puts "Largura: #{largura_final}"
+            puts "Espessura: #{espessura_final}"
+          
+            @@dados << {elemento:elemento,comprimento:comprimento_final,largura:largura_final,espessura:espessura_final}
+          
+    end
+    
+    def self.deselection
+      @@dados = []
+      puts "elementos deselecionado"
+    end
+    
+
+   def self.exportTable
+    if @@path
+      csv_file_path = 'dados_componentes.csv'
+      CSV.open(csv_file_path, 'wb', col_sep: ';') do |csv|
+        # Escreve a primeira linha da tabela
+        csv << ["Projeto", "Elemento", "Comprimento", "Largura", "Espessura"]
+      
+        # Escreve a segunda linha apenas com o resultado de self.get_file_js
+        csv << [self.get_file_js]
+      
+        # Itera sobre os dados e escreve as linhas subsequentes da tabela
+        @@dados.each do |dado|
+          csv << ["",dado[:elemento], dado[:comprimento], dado[:largura], dado[:espessura]]
+        end
+      end
+    end
+    
+    puts "Dados exportados para o arquivo CSV com sucesso: #{csv_file_path}"
+  end
+
+    
 
     def self.auto_start
       self.home_toolbar
       self.start_node_server
       self.home_html_dialog
     end
-    
+
+    # inicia uma sessão com servidor Node
     def self.start_node_server
         # Verifique se o servidor Node.js já está em execução
         
@@ -26,13 +119,13 @@ module Modular
           # Inicie o servidor Node.js em segundo plano
           auth_login_mjs_path = File.join(__dir__, 'app.mjs')
           @node_server_pid = spawn('node', auth_login_mjs_path)
-      
+          
           # Aguarde um momento para garantir que o servidor esteja pronto
           sleep(2)
         end
     end
 
-     # Cria um HTML Dialog com o servidor
+    # cria um ambiente de interação com HTML
     def self.home_html_dialog
       
       start_node_server #iniciar o servidor
@@ -61,17 +154,55 @@ module Modular
             
             Modular::Main.apply_texture(url,name)
             puts nome, url
-            
-            
           end
+
+    end
+        
+    def self.get_File
+        model = Sketchup.active_model
+        if model
+          file_name = model.path
+          if file_name.empty?
+            puts "O modelo não foi salvo ainda."
+                        # Abre a janela de "Salvar Como"
+            file_path = UI.savepanel("Salvar Como", "", "Modelos do SketchUp (*.skp)|*.skp||")
+            # Verifica se o usuário selecionou um arquivo
+            if file_path
+              # Salva o modelo com o caminho especificado
+              Sketchup.active_model.save(file_path)
+              puts "Modelo salvo em: #{file_path}"
+              @@path = file_name
+              self.exportTable
+              puts "tabela criada"
+              return nil
+            else
+                # Se o usuário cancelou a operação, nil será retornado
+                puts "Operação de salvar como cancelada."
+                return nil
+            end
+          else
+            puts "Modelo: #{file_name}"
+            @@path = file_name
+            self.exportTable
+            puts "tabela criada"
+            # return File.basename(file_name)
+          end
+        else
+          puts "Nenhum modelo está aberto no SketchUp no momento."
+          return nil
+        end
     end
     
-     # Este é o método que obtém e insere o componente no modelo.
+    def self.get_file_js
+      @@path
+    end
+    
+
+    
+     # obtém e insere o componente no modelo.
     def self.get_component( url, multi = false )
       filepath = url
       slash(filepath)
-      # At this point we could also save a reference to this path.
-      # Sort of our own Most Recently used path:
       @mru_skp_path = File.dirname(filepath)
       model = Sketchup.active_model
       deflist = model.definitions
@@ -79,7 +210,7 @@ module Modular
         next false if cdef.group?
         slash(cdef.path) == filepath 
       }
-      if comp # already loaded into DefinitionList
+      if comp 
         model.place_component(comp, multi)
       else
         begin
@@ -94,7 +225,8 @@ module Modular
         end
       end
     end
-  
+
+    # lida com caracteres de endereço
     def self.slash(filepath)
       filepath.gsub!(/\\\\|\\/,'/')
     end
@@ -102,7 +234,7 @@ module Modular
     def self.ref(url)
       get_component(url, true)
       puts  "Componente inserido: #{url}"
-    end    
+    end   
 
     # Cria e aplica o material recebido
     def self.apply_texture(texture_path, material_name)
@@ -135,7 +267,8 @@ module Modular
           UI.messagebox("O material '#{material_name}' não foi encontrado no modelo.")
       end
     end
-    
+ 
+
      
     @@toolbar_created = false  # Variável de classe para controlar se a barra de ferramentas foi criada
       
@@ -145,6 +278,15 @@ module Modular
       cmd_study = UI::Command.new("Estudo") { self.home_html_dialog}
       toolbar = UI::Toolbar.new "ModuLar"
       toolbar.add_item cmd_study
+    
+      
+      cmd_export = UI::Command.new("Exportar") { self.get_File }
+=begin  cmd_export.large_icon = "path_to_large_icon.png" # Substitua "path_to_large_icon.png" pelo caminho para o ícone grande
+        cmd_export.small_icon = "path_to_small_icon.png" # Substitua "path_to_small_icon.png" pelo caminho para o ícone pequeno
+=end      
+        cmd_export.tooltip = "Exportar Tabela" # Defina uma dica de ferramenta para o ícone
+      toolbar.add_item cmd_export
+
       toolbar.show
       @@toolbar_created = true  # Marca a barra de ferramentas como criada
     end
@@ -166,7 +308,10 @@ module Modular
   end
       
   file_loaded(__FILE__)
-  
-end
-Modular::Main.auto_start
 
+end
+  Modular::Main.auto_start
+
+  UI.start_timer(0.1, false) do
+    Modular::Main.add_selection_observer
+  end

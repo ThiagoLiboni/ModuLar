@@ -4,6 +4,7 @@ import { GetID } from "./storage.js";
 
 const verificarPagina = window.location.pathname.split("/").pop();
 
+
 const botaoComp = document.querySelector("#buttonComp");
 const lista = document.getElementById("lista");
 const Item1 = document.getElementById("item1");
