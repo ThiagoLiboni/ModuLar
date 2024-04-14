@@ -1,27 +1,29 @@
-﻿const express = require('express'); // Gerenciador de rotas
-const path = require('path');
-// const { dirname } = require('path');
-// const { fileURLToPath } = require('url');
+﻿import express from 'express';//Gerenciador de rotas
 
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const db = require('./db/config/db_config.js');
-const db_seller = require('./db/model/Vendedor.js');
-const db_client = require('./db/model/Cliente.js');
-const db_project = require('./db/model/Projetos.js');
+import * as db from './db/config/db_config.js';
+import * as db_seller from './db/model/Vendedor.js';
+import * as db_client from './db/model/Cliente.js';
+import * as db_project from './db/model/Projetos.js';
 
-const multer = require('multer');
-const fs = require('fs');
-const bodyParser = require('body-parser');
-const https = require('https');
+import multer from 'multer';
 
-const os = require('os');
-const csv = require('csv');
+import fs from 'fs'
+import bodyParser from 'body-parser';
+import https from 'https';
 
-const port = process.env.PORT || 3000;
+import os from 'os';
+import * as csv from "csv";
+import { where } from 'sequelize';
+
+let port = process.env.PORT || 3000;
 
 const app = express();
 
-// Conectar ao banco de dados
+//Conectar ao banco de dados
 db.DATABASE.authenticate()
   .then(() => {
     console.log("Conexão com banco de dados feita com sucesso!");
@@ -30,9 +32,14 @@ db.DATABASE.authenticate()
     console.log("Conexão com banco de dados não estabelecida");
   });
 
+
+  
 export const username = os.userInfo().username;
 
-// Lida com o processo de config style
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+//LIDA COM O PROCESSO DE CONFIG STYLE
 app.use(express.static('su_modular'));
 app.use('/public', express.static(path.join(__dirname, '/public'), { extensions: ['css'] }));
 app.use('/public', express.static(path.join(__dirname, '/public'), { extensions: ['png', 'jpg'] }));
@@ -42,69 +49,66 @@ app.use('/Storage', express.static(path.join(__dirname, 'Storage')));
 app.use(express.text());
 app.use(bodyParser.urlencoded({ extended: true })); // Permite a requisição de arrays e objetos
 app.use(bodyParser.json()); // Lida com JSON, como tipo de requisição 
-const upload = multer(); // Lidar com processamento de informações do formulário
+const upload = multer();// Lidar com processamento de informações do fomrulário
 
-// ROTAS GET PARA REDIRECIONAMENTO 
+
+
+//ROTAS GET PARA REDIRECIONAMENTO 
 
 app.get('/', (req, res) => {
   res.send("Hello World");
 });
-
 app.get('/Authentication', (req, res) => {
   res.sendFile(path.join(__dirname, 'Authentication.html'));
 });
-
 app.get('/Home', (req, res) => {
   res.sendFile(path.join(__dirname, "views/index.html"))
-});
-
+})
 app.get('/component/DRYComponent', (req, res) => {
   res.sendFile(path.join(__dirname, "views/DRYComponent.html"))
-});
-
+})
 app.get('/component/WETComponent', (req, res) => {
   res.sendFile(path.join(__dirname, "views/WETComponent.html"))
-});
-
+})
 app.get('/Materials', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Materials.html"))
-});
-
+})
 app.get('/Materials/MDF', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Materials.html"))
-});
-
+})
+// app.get('/Modular/Reckons', (req, res) => {
+//   res.sendFile(path.join(__dirname, "views/Reckons/ReckonsHome.html"))
+// })
 app.get('/Modular/Reckons/Cutplan', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Reckons/ReckonsCutPlan.html"))
-});
-
+})
 app.get('/Modular/Register/SellerRegistration', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Reckons/Register/new_User.html"))
 });
-
 app.get('/Modular/Register/CustumerRegistration', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Reckons/Register/new_User.html"))
 });
-
 app.get('/Modular/RegisterProject', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Reckons/Register/new_project.html"))
 });
-
 app.get('/Modular/Projects', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Reckons/budget.html"))
 });
-
 app.get('/Modular/Budget-Guide/:id', (req, res) => {
   res.sendFile(path.join(__dirname, "views/Reckons/budgetGuide.html"))
+
 });
+
+
+
+
 
 const destino = path.join( // destino download
   process.env.APPDATA,
   'SketchUp',
   'SketchUp 2022',
   'SketchUp',
-  'Components'
-);
+  'Components')
 
 // EFETUAR O DOWNLOAD DOS COMPONENTES PARA PASTA LOCAL
 app.post('/download', (req, res) => {
@@ -145,17 +149,20 @@ app.post('/download', (req, res) => {
   });
 });
 
-// GUARDAR RELAÇÃO DE COMPONENTES 
+
+//GUARDAR RELAÇÃO DE COMPONENTES 
 app.post('/savedData', (req, res) => {
   const dados = req.body.Data;
 
   const dataJSON = JSON.stringify(dados)
   fs.writeFileSync('Storage/dryStorage.json', dataJSON);
 
-  res.send('Dados salvos com sucesso.')
-});
 
-// CADASTRAR NOVAS TEXTURAS
+  res.send('Dados salvos com sucesso.')
+})
+
+
+//CADASTRAR NOVAS TEXTURAS
 app.post('/SaveTex', (req, res) => {
 
   const dados = req.body.Data;
@@ -163,12 +170,12 @@ app.post('/SaveTex', (req, res) => {
   const dataJSON = JSON.stringify(dados)
   fs.writeFileSync('Storage/Texture.json', dataJSON);
   res.send('Dados Salvos com Sucesso.')
-});
+})
 
-// GERAR RELAÇÃO DE PEÇAS POR PROJETO
+//GERAR RELAÇÃO DE PEÇAS POR PROJETO
+
 app.get("/Modular/Reckons", async (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/ReckonsHome.html"));
-
+  res.sendFile(path.join(__dirname, "views/Reckons/ReckonsHome.html"))
   const file = "dados_componentes.csv"
 
   const Projeto = []
@@ -201,18 +208,25 @@ app.get("/Modular/Reckons", async (req, res) => {
       const local = path.join(__dirname, 'Storage/table.json');
       fs.writeFileSync(local, JSON.stringify(dadosJSON));
     })
+
     .on('error', (err) => {
       console.error('Erro ao ler o arquivo CSV:', err);
       return res.status(500).send("Erro ao ler o arquivo CSV");
     });
+
 });
 
-// CADASTRAR NOVO VENDEDOR
-app.post('/Vendedor', upload.none(), async (req, res) => { // Upload.none() ==== INFORMA QUE LIDARÁ APENAS COM CAMPO DE TEXTO E NENHUM ARQUIVO
+
+
+
+
+
+//CADASTRAR NOVO VENDEDOR
+app.post('/Vendedor', upload.none(), async (req, res) => { //Upload.none() ==== INFORMA QUE LIDARÁ APENAS COM CAMPO DE TEXTO E NENHUM ARQUIVO
   try {
     const data = req.body;
     const contato = data.phone
-    const CONTATO = contato.replace(/[()\s-]/g, '') // Remover os caracteres de formatação (pontos e traços) do CPF
+    const CONTATO = contato.replace(/[()\s-]/g, '')// Remover os caracteres de formatação (pontos e traços) do CPF
     const endereco = `${data.endereco},  ${data.complemento} - ${data.bairro}`
     const newSeller = {
       Contato: CONTATO,
@@ -223,7 +237,7 @@ app.post('/Vendedor', upload.none(), async (req, res) => { // Upload.none() ====
       Estado: data.estado
     }
 
-    const user = await db_seller.VENDEDOR.create(newSeller); // Inserir o novo usuário no banco de dados
+    const user = await db_seller.VENDEDOR.create(newSeller);// Inserir o novo usuário no banco de dados
     console.log('Novo usuário inserido:', user.toJSON());
     console.log(`Dados recebidos: Vendedor: ${newSeller.Nome}`)
 
@@ -233,10 +247,11 @@ app.post('/Vendedor', upload.none(), async (req, res) => { // Upload.none() ====
     console.error('Erro durante o processamento do formulário:', error);
     res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');
   }
-});
 
-// CADASTRAR NOVOS CLIENTE
-app.post('/Cliente', upload.none(), async (req, res) => { // Upload.none() ==== INFORMA QUE LIDARÁ APENAS COM CAMPO DE TEXTO E NENHUM ARQUIVO
+})
+
+//CADASTRAR NOVOS CLIENTE
+app.post('/Cliente', upload.none(), async (req, res) => { //Upload.none() ==== INFORMA QUE LIDARÁ APENAS COM CAMPO DE TEXTO E NENHUM ARQUIVO
   try {
 
     const data = req.body;
@@ -254,7 +269,7 @@ app.post('/Cliente', upload.none(), async (req, res) => { // Upload.none() ==== 
     };
 
 
-    const user = await db_client.CLIENTE.create(newClient); // Inserir o novo usuário no banco de dados
+    const user = await db_client.CLIENTE.create(newClient);// Inserir o novo usuário no banco de dados
     console.log('Novo cadastro inserido:', user.toJSON());
     console.log(`Dados recebidos: Cliente: ${newClient.Nome}`)
 
@@ -264,10 +279,11 @@ app.post('/Cliente', upload.none(), async (req, res) => { // Upload.none() ==== 
     console.error('Erro durante o processamento do formulário:', error);
     res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');
   }
-});
+})
 
-// REGISTRAR NOVOS PROJETOS 
-app.post('/Projetos', upload.none(), async (req, res) => { // Upload.none() ==== INFORMA QUE LIDARÁ APENAS COM CAMPO DE TEXTO E NENHUM ARQUIVO
+
+//REGISTRAR NOVOS PROJETOS 
+app.post('/Projetos', upload.none(), async (req, res) => { //Upload.none() ==== INFORMA QUE LIDARÁ APENAS COM CAMPO DE TEXTO E NENHUM ARQUIVO
   try {
     const data = req.body;
     const vendedor = data.vendedor;
@@ -285,9 +301,10 @@ app.post('/Projetos', upload.none(), async (req, res) => { // Upload.none() ====
       Status_process: 'Aberto'
     }
 
-    const user = await db_project.PROJETO.create(projetos); // Inserir o novo usuário no banco de dados
+    const user = await db_project.PROJETO.create(projetos);// Inserir o novo usuário no banco de dados
     console.log('Novo projeto inserido:', user.toJSON());
     console.log(`Dados recebidos: Projeto: ${projetos.Projeto},  Cliente: ${projetos.Cliente}`)
+
 
     res.status(200).send('Dados do projeto recebidos com sucesso!');
   } catch (error) {
@@ -295,9 +312,9 @@ app.post('/Projetos', upload.none(), async (req, res) => { // Upload.none() ====
     console.error('Erro durante o processamento do formulário:', error);
     res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');
   }
-});
+})
 
-// ACESSAR LISTA DOS NOMES DE CLIENTES E VENDEDORES;
+//ACESSAR LISTA DOS NOMES DE CLIENTES E VENDEDORES;
 app.get('/catchNames', async (req, res) => {
   try {
     const Cliente = await db_client.CLIENTE.findAll({
@@ -306,6 +323,7 @@ app.get('/catchNames', async (req, res) => {
     const Vendedor = await db_seller.VENDEDOR.findAll({
       attributes: ['Nome']
     });
+
 
     const clientes = Cliente.map(cliente => cliente.Nome);
     const vendedores = Vendedor.map(vendedor => vendedor.Nome);
@@ -334,7 +352,7 @@ app.get('/tableProjetos', async (req, res) => {
     res.status(500).json({ error: 'Erro ao obter a relação de projetos' })
   }
 
-});
+})
 
 // ACESSAR A TABELA CLIENTES
 app.get('/tableClientes', async (req, res) => {
@@ -347,7 +365,7 @@ app.get('/tableClientes', async (req, res) => {
     res.status(500).json({ error: 'Erro ao obter a relação de clientes' })
   }
 
-});
+})
 
 app.post('/canceledOrder', async (req, res) => {
   try {
@@ -367,8 +385,11 @@ app.post('/canceledOrder', async (req, res) => {
   }catch(error){
     console.error('Erro durante o processamento do formulário:', error);
   res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');}
-});
+})
+
+
 
 app.listen(port, () => {
-    console.log(`Sessão iniciada - ${port}`);
-});
+    console.log(`Sessão iniciada - ${port}`)
+
+  })
