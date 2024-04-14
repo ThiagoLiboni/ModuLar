@@ -4,7 +4,7 @@
     "description": "Biblioteca dinamica para  integração à ambientes planejados.",
     "main": "app.js",
     "scripts": {
-      "build": "sucrase --transforms imports --out-dir dist",
+      
       "start": "nodemon app.js"
     },
     "author": "ThiagoLiboni",
