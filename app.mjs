@@ -103,51 +103,51 @@ app.get('/Modular/Budget-Guide/:id', (req, res) => {
 
 
 
-const destino = path.join( // destino download
-  process.env.APPDATA,
-  'SketchUp',
-  'SketchUp 2022',
-  'SketchUp',
-  'Components')
+// const destino = path.join( // destino download
+//   process.env.APPDATA,
+//   'SketchUp',
+//   'SketchUp 2022',
+//   'SketchUp',
+//   'Components')
 
-// EFETUAR O DOWNLOAD DOS COMPONENTES PARA PASTA LOCAL
-app.post('/download', (req, res) => {
-  const url = req.body.URL;
-  const arquivoNome = `${req.body.Nome}.skp`;
-  const caminhoCompleto = path.join(destino, arquivoNome);
+// // EFETUAR O DOWNLOAD DOS COMPONENTES PARA PASTA LOCAL
+// app.post('/download', (req, res) => {
+//   const url = req.body.URL;
+//   const arquivoNome = `${req.body.Nome}.skp`;
+//   const caminhoCompleto = path.join(destino, arquivoNome);
 
-  if (fs.existsSync(caminhoCompleto)) { //confere a existência do arquivo
-    fs.unlinkSync(caminhoCompleto); //  limpar para reescrever.
-    fs.closeSync(fs.openSync(caminhoCompleto, 'w'));
-  }
+//   if (fs.existsSync(caminhoCompleto)) { //confere a existência do arquivo
+//     fs.unlinkSync(caminhoCompleto); //  limpar para reescrever.
+//     fs.closeSync(fs.openSync(caminhoCompleto, 'w'));
+//   }
 
-  if (!fs.existsSync(caminhoCompleto)) { // confere a inexistência para que possa ser gerado..
-    fs.closeSync(fs.openSync(caminhoCompleto, 'w'));
-  }
+//   if (!fs.existsSync(caminhoCompleto)) { // confere a inexistência para que possa ser gerado..
+//     fs.closeSync(fs.openSync(caminhoCompleto, 'w'));
+//   }
 
-  if (!fs.existsSync(destino)) { // confere a inexistência do caminho para que possa ser gerado..
-    fs.mkdirSync(destino, { recursive: true });
-  }
+//   if (!fs.existsSync(destino)) { // confere a inexistência do caminho para que possa ser gerado..
+//     fs.mkdirSync(destino, { recursive: true });
+//   }
 
-  const arquivo = fs.createWriteStream(caminhoCompleto);
+//   const arquivo = fs.createWriteStream(caminhoCompleto);
 
-  https.get(url, (response) => {
-    response.pipe(arquivo);
+//   https.get(url, (response) => {
+//     response.pipe(arquivo);
 
-    arquivo.on('finish', () => {
-      arquivo.close(() => {
+//     arquivo.on('finish', () => {
+//       arquivo.close(() => {
 
-        const responseData = { message: 'Download concluído com sucesso' };
-        res.status(200).json(responseData);
-      });
-    });
-  }).on('error', (err) => {
-    fs.unlink(caminhoCompleto, () => {
-      console.error(`Erro durante o download: ${err.message}`);
-      res.status(500).send('Erro durante o download');
-    });
-  });
-});
+//         const responseData = { message: 'Download concluído com sucesso' };
+//         res.status(200).json(responseData);
+//       });
+//     });
+//   }).on('error', (err) => {
+//     fs.unlink(caminhoCompleto, () => {
+//       console.error(`Erro durante o download: ${err.message}`);
+//       res.status(500).send('Erro durante o download');
+//     });
+//   });
+// });
 
 
 //GUARDAR RELAÇÃO DE COMPONENTES 

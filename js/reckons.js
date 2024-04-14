@@ -242,6 +242,7 @@ if (verificarPagina == "Reckons") {
         // window.location.href = "../views/ReckonsCutPlan.html"
     })
     document.getElementById('orc').addEventListener('click', () => {
+        console.log("clicou")
         window.location.href = "/Modular/Projects"
     })
 
