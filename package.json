@@ -24,6 +24,8 @@
       "mysql2": "^3.9.3",
       "sequelize": "^6.37.2"
     },
+    "engines": {"node": "18.17.1"},
+
     "devDependencies": {
       "@babel/cli": "^7.24.1",
       "@babel/core": "^7.24.3",

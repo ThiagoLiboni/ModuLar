@@ -58,6 +58,9 @@ const upload = multer();// Lidar com processamento de informações do fomrulár
 
 //ROTAS GET PARA REDIRECIONAMENTO 
 
+app.get('/', (req, res) => {
+  res.send("Hello World");
+});
 app.get('/Authentication', (req, res) => {
   res.sendFile(path.join(__dirname, 'Authentication.html'));
 });
