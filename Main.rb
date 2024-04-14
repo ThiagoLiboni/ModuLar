@@ -117,7 +117,7 @@ module Modular
         
         if @node_server_pid.nil? || !Process.kill(0, @node_server_pid)
           # Inicie o servidor Node.js em segundo plano
-          auth_login_mjs_path = File.join(__dir__, 'app.mjs')
+          auth_login_mjs_path = File.join(__dir__, 'app.js')
           @node_server_pid = spawn('node', auth_login_mjs_path)
           
           # Aguarde um momento para garantir que o servidor esteja pronto

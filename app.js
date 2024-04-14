@@ -3,6 +3,7 @@ const path = require('path');
 // const { dirname } = require('path');
 // const { fileURLToPath } = require('url');
 
+
 const db = require('./db/config/db_config.js');
 const db_seller = require('./db/model/Vendedor.js');
 const db_client = require('./db/model/Cliente.js');
