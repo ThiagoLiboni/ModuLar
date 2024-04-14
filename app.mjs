@@ -19,10 +19,9 @@ import os from 'os';
 import * as csv from "csv";
 import { where } from 'sequelize';
 
-import dotenv from 'dotenv';
-dotenv.config();
+let port = process.env.PORT || 3000;
 
-
+const app = express();
 
 //Conectar ao banco de dados
 db.DATABASE.authenticate()
@@ -34,10 +33,8 @@ db.DATABASE.authenticate()
   });
 
 
+  
 export const username = os.userInfo().username;
-
-const app = express();
-let port = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
