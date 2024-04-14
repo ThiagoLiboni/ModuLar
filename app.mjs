@@ -1,8 +1,8 @@
 ﻿import express from 'express';//Gerenciador de rotas
 
 import path from 'path';
-import { dirname, fileURLToPath } from 'path';
-// import { fileURLToPath } from 'url';
+import { dirname} from 'path';
+import { fileURLToPath } from 'url';
 
 import * as db from './db/config/db_config.js';
 import * as db_seller from './db/model/Vendedor.js';
