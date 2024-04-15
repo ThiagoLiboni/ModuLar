@@ -1,11 +1,6 @@
 {
     "version": 2,
-    "builds": [
-      {
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
+      "routes": [
       { "src": "/(.*)", "dest": "/app.mjs" }
     ]
   }
