@@ -4,7 +4,8 @@
     "description": "Biblioteca dinamica para  integração à ambientes planejados.",
     "main": "app.mjs",
     "scripts": {
-    "start": "node app.mjs"  
+    "start": "node app.mjs",
+    "vercel-build": "npm run build"
     },
     "author": "ThiagoLiboni",
     "license": "ISC",
