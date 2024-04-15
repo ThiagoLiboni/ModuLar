@@ -5,6 +5,7 @@
     "main": "app.js",
     "scripts": {
       "dev": "nodemon app.mjs",
+        "build": "npm run compile",
       "start": "set NODE_ENV=production && node app.mjs"
     },
     "author": "ThiagoLiboni",
