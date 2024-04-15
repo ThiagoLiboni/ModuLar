@@ -1,12 +1,6 @@
 {
-    "version": 2,
-     "builds": [
-      {
-        "use": "app.mjs"
-      }
-    ],
-    "routes": [
-      { "src": "/(.*)", "dest": "/app.mjs" }
-    ]
-  }
-  
+  "version": 2,
+  "routes": [
+    { "src": "/(.*)", "dest": "/app.js" }
+  ]
+}
