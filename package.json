@@ -4,7 +4,7 @@
     "description": "Biblioteca dinamica para  integração à ambientes planejados.",
     "main": "app.mjs",
     "scripts": {
-    "start": "node app.mjs",
+    "start": "node app.mjs"
    
     },
     "author": "ThiagoLiboni",
