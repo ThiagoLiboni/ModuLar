@@ -6,7 +6,20 @@
       "use": "@vercel/node"
     }
   ],
+<<<<<<< HEAD
   "routes": [
     { "src": "/(.*)", "dest": "/app.mjs" }
   ]
 }
+=======
+   "functions": {
+    "api/*": {
+      "runtime": "@vercel/node",
+      "memory": 1024
+    }
+  },
+  "routes": [
+    { "src": "/(.*)", "dest": "/app.mjs" }
+  ]
+}
+>>>>>>> 86c053fa07a110aec402ed37b814dd566685dc67
