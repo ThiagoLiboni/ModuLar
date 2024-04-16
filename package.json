@@ -2,10 +2,9 @@
     "name": "su_modular",
     "version": "1.0.0",
     "description": "Biblioteca dinamica para  integração à ambientes planejados.",
-    "main": "app.js",
+    "main": "app.mjs",
     "scripts": {
-      "dev": "nodemon app.mjs",
-      "start": "set NODE_ENV=production && node app.mjs"
+        "start": "node app.mjs"      
     },
     "author": "ThiagoLiboni",
     "license": "ISC",
