@@ -1,4 +1,7 @@
-﻿import express from 'express';//Gerenciador de rotas
+﻿
+import './server.js';
+
+import express from 'express';//Gerenciador de rotas
 
 import path from 'path';
 import { dirname} from 'path';
@@ -19,7 +22,7 @@ import os from 'os';
 import * as csv from "csv";
 import { where } from 'sequelize';
 
-let port = process.env.PORT || 3000;
+// let port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -389,7 +392,9 @@ app.post('/canceledOrder', async (req, res) => {
 
 
 
-app.listen(port, () => {
-    console.log(`Sessão iniciada - ${port}`)
+// app.listen(port, () => {
+//     console.log(`Sessão iniciada - ${port}`)
 
-  })
+//   })
+  
+  export default app;
