@@ -14,16 +14,18 @@ db.DATABASE.authenticate()
     console.log("Conexão com banco de dados não estabelecida");
   });
 
-// Exemplo de rota de teste
-app.get('/', (req, res) => {
-  res.send('Servidor está rodando!');
-});
+  
+  
+  
+  // Inicie o servidor
+  export function startServer() {
+      // Exemplo de rota de teste
+      app.get('/', (req, res) => {
+        res.send('Servidor está rodando!');
+      });
 
-
-
-// Inicie o servidor
-export function startServer() {
-  const port = process.env.PORT || 3000;
+      const port = process.env.PORT || 3000;
+      
   app.listen(port, () => {
     console.log(`Servidor iniciado na porta ${port}`);
   });
