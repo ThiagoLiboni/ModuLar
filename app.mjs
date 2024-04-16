@@ -1,5 +1,5 @@
 ﻿
-import './server.js';
+import { startServer } from './server.js';
 
 import express from 'express';//Gerenciador de rotas
 
@@ -7,7 +7,7 @@ import path from 'path';
 import { dirname} from 'path';
 import { fileURLToPath } from 'url';
 
-import * as db from './db/config/db_config.js';
+
 import * as db_seller from './db/model/Vendedor.js';
 import * as db_client from './db/model/Cliente.js';
 import * as db_project from './db/model/Projetos.js';
@@ -22,18 +22,9 @@ import os from 'os';
 import * as csv from "csv";
 import { where } from 'sequelize';
 
-// let port = process.env.PORT || 3000;
-
 const app = express();
 
-//Conectar ao banco de dados
-db.DATABASE.authenticate()
-  .then(() => {
-    console.log("Conexão com banco de dados feita com sucesso!");
-  })
-  .catch(() => {
-    console.log("Conexão com banco de dados não estabelecida");
-  });
+
 
 
   
@@ -390,11 +381,4 @@ app.post('/canceledOrder', async (req, res) => {
   res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');}
 })
 
-
-
-// app.listen(port, () => {
-//     console.log(`Sessão iniciada - ${port}`)
-
-//   })
-  
-  export default app;
+startServer();
