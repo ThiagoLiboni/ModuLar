@@ -393,3 +393,12 @@ app.listen(port, () => {
     console.log(`Sessão iniciada - ${port}`)
 
   })
+
+  export default async (req, res) => {
+    try {
+      await app(req, res);
+    } catch (error) {
+      console.error("Erro ao lidar com a solicitação:", error);
+      res.status(500).send("Erro interno do servidor");
+    }
+  };
