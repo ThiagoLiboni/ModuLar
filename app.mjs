@@ -34,7 +34,7 @@ DATABASE.authenticate()
 
 
   
-export const username = os.userInfo().username;
+// const username = os.userInfo().username;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
