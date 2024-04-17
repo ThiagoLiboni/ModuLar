@@ -4,7 +4,7 @@ import path from 'path';
 import { dirname} from 'path';
 import { fileURLToPath } from 'url';
 
-import * as db from './db/config/db_config.js';
+import {DATABASE} from './db/config/db_config.js';
 import * as db_seller from './db/model/Vendedor.js';
 import * as db_client from './db/model/Cliente.js';
 import * as db_project from './db/model/Projetos.js';
@@ -24,7 +24,7 @@ let port = process.env.PORT || 3000;
 const app = express();
 
 //Conectar ao banco de dados
-db.DATABASE.authenticate()
+DATABASE.authenticate()
   .then(() => {
     console.log("Conexão com banco de dados feita com sucesso!");
   })

@@ -1,7 +1,15 @@
-import {Sequelize} from 'sequelize';
 
-export const DATABASE = new Sequelize("ftsmodular","root","admin",{
+import {Sequelize} from 'sequelize';
+import mysql2 from 'mysql2';
+
+export const DATABASE = new Sequelize({
+  database: "ftsmodular",
+  username:"root",
+  password: "admin",
   host: 'localhost',
   dialect: 'mysql',
-  dialectModule: await import('mysql2'),
+  dialectModule: mysql2,
+  benchmark: true
 });
+
+
