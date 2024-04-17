@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { DATABASE } from '../config/db_config.js';
 
-export const PROJETO = DATABASE.define('relatorio_projetos', {
+const PROJETO = DATABASE.define('relatorio_projetos', {
 
     id_relatorio: {
         type: DataTypes.INTEGER,
@@ -38,3 +38,5 @@ export const PROJETO = DATABASE.define('relatorio_projetos', {
     tableName: 'relatorio_projetos',
     timestamps: false
 });
+
+export default PROJETO;

@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { DATABASE } from '../config/db_config.js';
 
-export const VENDEDOR = DATABASE.define('vendedor', {
+const VENDEDOR = DATABASE.define('vendedor', {
     Contato: {
         type: DataTypes.INTEGER,
         primaryKey: true // Definir Contato como chave primária
@@ -25,3 +25,5 @@ export const VENDEDOR = DATABASE.define('vendedor', {
     tableName: 'vendedor', // Especifica o nome da tabela
     timestamps: false
 });
+
+export default VENDEDOR;

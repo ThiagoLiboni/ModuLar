@@ -5,9 +5,9 @@ import { dirname} from 'path';
 import { fileURLToPath } from 'url';
 
 import {DATABASE} from './db/config/db_config.js';
-import * as db_seller from './db/model/Vendedor.js';
-import * as db_client from './db/model/Cliente.js';
-import * as db_project from './db/model/Projetos.js';
+import VENDEDOR from './db/model/Vendedor.js';
+import CLIENTE from './db/model/Cliente.js';
+import PROJETO from './db/model/Projetos.js';
 
 import multer from 'multer';
 
@@ -237,7 +237,7 @@ app.post('/Vendedor', upload.none(), async (req, res) => { //Upload.none() ==== 
       Estado: data.estado
     }
 
-    const user = await db_seller.VENDEDOR.create(newSeller);// Inserir o novo usuário no banco de dados
+    const user = await VENDEDOR.create(newSeller);// Inserir o novo usuário no banco de dados
     console.log('Novo usuário inserido:', user.toJSON());
     console.log(`Dados recebidos: Vendedor: ${newSeller.Nome}`)
 
@@ -269,7 +269,7 @@ app.post('/Cliente', upload.none(), async (req, res) => { //Upload.none() ==== I
     };
 
 
-    const user = await db_client.CLIENTE.create(newClient);// Inserir o novo usuário no banco de dados
+    const user = await CLIENTE.create(newClient);// Inserir o novo usuário no banco de dados
     console.log('Novo cadastro inserido:', user.toJSON());
     console.log(`Dados recebidos: Cliente: ${newClient.Nome}`)
 
@@ -301,7 +301,7 @@ app.post('/Projetos', upload.none(), async (req, res) => { //Upload.none() ==== 
       Status_process: 'Aberto'
     }
 
-    const user = await db_project.PROJETO.create(projetos);// Inserir o novo usuário no banco de dados
+    const user = await PROJETO.create(projetos);// Inserir o novo usuário no banco de dados
     console.log('Novo projeto inserido:', user.toJSON());
     console.log(`Dados recebidos: Projeto: ${projetos.Projeto},  Cliente: ${projetos.Cliente}`)
 
@@ -317,10 +317,10 @@ app.post('/Projetos', upload.none(), async (req, res) => { //Upload.none() ==== 
 //ACESSAR LISTA DOS NOMES DE CLIENTES E VENDEDORES;
 app.get('/catchNames', async (req, res) => {
   try {
-    const Cliente = await db_client.CLIENTE.findAll({
+    const Cliente = await CLIENTE.findAll({
       attributes: ['Nome']
     });
-    const Vendedor = await db_seller.VENDEDOR.findAll({
+    const Vendedor = await VENDEDOR.findAll({
       attributes: ['Nome']
     });
 
@@ -345,7 +345,7 @@ app.get('/catchNames', async (req, res) => {
 app.get('/tableProjetos', async (req, res) => {
 
   try {
-    const data = await db_project.PROJETO.findAll();
+    const data = await PROJETO.findAll();
 
     res.json(data)
   } catch (error) {
@@ -358,7 +358,7 @@ app.get('/tableProjetos', async (req, res) => {
 app.get('/tableClientes', async (req, res) => {
 
   try {
-    const data = await db_client.CLIENTE.findAll();
+    const data = await CLIENTE.findAll();
 
     res.json(data)
   } catch (error) {
@@ -372,7 +372,7 @@ app.post('/canceledOrder', async (req, res) => {
     
     const id = req.body
 
-    const order = await db_project.PROJETO.update({Status_process:"Cancelado"}, {
+    const order = await PROJETO.update({Status_process:"Cancelado"}, {
       where: {
         id_relatorio: id
       }

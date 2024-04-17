@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { DATABASE } from '../config/db_config.js';
 
 
-export const CLIENTE = DATABASE.define('cliente', {
+const CLIENTE = DATABASE.define('cliente', {
     CPF: {
       type: DataTypes.STRING,
       primaryKey: true, // Definir como chave primaria
@@ -31,3 +31,4 @@ export const CLIENTE = DATABASE.define('cliente', {
     timestamps: false // Desativar timestamps
   });
   
+  export default CLIENTE;

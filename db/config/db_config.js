@@ -12,4 +12,4 @@ export const DATABASE = new Sequelize({
   benchmark: true
 });
 
-
+export default DATABASE;
