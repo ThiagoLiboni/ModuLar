@@ -99,7 +99,7 @@ module Modular
         end
       end
       dados_csv = CSV.read(csv_file_path, headers: true, col_sep: ';')
-      erb :component_table, locals: { dados: dados_csv }
+      erb :ReckonsHome, locals: { dados: dados_csv }
     end
     
     puts "Dados exportados com sucesso: #{csv_file_path}"
