@@ -489,7 +489,7 @@ let idCurrent;
 
 if (verificarPagina === "Projects") {
     let processAccessed = false;
-    console.log("estou aqui")
+    // console.log("estou aqui")
     document.addEventListener('DOMContentLoaded', function () {
         const table = document.querySelector('.tbody_');
 

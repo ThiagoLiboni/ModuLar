@@ -176,43 +176,43 @@ app.post('/SaveTex', (req, res) => {
 
 app.get("/Modular/Reckons", async (req, res) => {
   res.sendFile(path.join(__dirname, "views/Reckons/ReckonsHome.html"))
-  const file = "dados_componentes.csv"
+  // const file = "dados_componentes.csv"
 
-  const Projeto = []
-  const Elemento = []
-  const Comprimento = []
-  const Largura = []
-  const Espessura = []
+  // const Projeto = []
+  // const Elemento = []
+  // const Comprimento = []
+  // const Largura = []
+  // const Espessura = []
 
-  fs.createReadStream(file)
-    .pipe(csv.parse({ columns: true, delimiter: ';' }))
-    .on('data', (dadosLinha) => {
-      // Adicionando o valor da segunda coluna de cada linha ao array
-      Projeto.push(dadosLinha['Projeto'] || null);
-      Elemento.push(dadosLinha['Elemento'] || null);
-      Comprimento.push(dadosLinha['Comprimento'] || null);
-      Largura.push(dadosLinha['Largura'] || null);
-      Espessura.push(dadosLinha['Espessura'] || null);
-    })
-    .on('end', () => {
-      const dadosJSON = {
-        Projeto: Projeto,
-        Elemento: Elemento,
-        Comprimento: Comprimento,
-        Largura: Largura,
-        Espessura: Espessura
-      };
-      console.log(dadosJSON);
-      console.log('Importação concluída');
+  // fs.createReadStream(file)
+  //   .pipe(csv.parse({ columns: true, delimiter: ';' }))
+  //   .on('data', (dadosLinha) => {
+  //     // Adicionando o valor da segunda coluna de cada linha ao array
+  //     Projeto.push(dadosLinha['Projeto'] || null);
+  //     Elemento.push(dadosLinha['Elemento'] || null);
+  //     Comprimento.push(dadosLinha['Comprimento'] || null);
+  //     Largura.push(dadosLinha['Largura'] || null);
+  //     Espessura.push(dadosLinha['Espessura'] || null);
+  //   })
+  //   .on('end', () => {
+  //     const dadosJSON = {
+  //       Projeto: Projeto,
+  //       Elemento: Elemento,
+  //       Comprimento: Comprimento,
+  //       Largura: Largura,
+  //       Espessura: Espessura
+  //     };
+  //     console.log(dadosJSON);
+  //     console.log('Importação concluída');
 
-      const local = path.join(__dirname, 'Storage/table.json');
-      fs.writeFileSync(local, JSON.stringify(dadosJSON));
-    })
+  //     const local = path.join(__dirname, 'Storage/table.json');
+  //     fs.writeFileSync(local, JSON.stringify(dadosJSON));
+  //   })
 
-    .on('error', (err) => {
-      console.error('Erro ao ler o arquivo CSV:', err);
-      return res.status(500).send("Erro ao ler o arquivo CSV");
-    });
+  //   .on('error', (err) => {
+  //     console.error('Erro ao ler o arquivo CSV:', err);
+  //     return res.status(500).send("Erro ao ler o arquivo CSV");
+  //   });
 
 });
 

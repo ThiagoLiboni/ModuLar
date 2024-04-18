@@ -91,16 +91,18 @@ module Modular
         csv << ["Projeto", "Elemento", "Comprimento", "Largura", "Espessura"]
       
         # Escreve a segunda linha apenas com o resultado de self.get_file_js
-        csv << [self.get_file_js]
+        csv << [self.get_filename_js]
       
         # Itera sobre os dados e escreve as linhas subsequentes da tabela
         @@dados.each do |dado|
           csv << ["",dado[:elemento], dado[:comprimento], dado[:largura], dado[:espessura]]
         end
       end
+      dados_csv = CSV.read(csv_file_path, headers: true, col_sep: ';')
+      erb :component_table, locals: { dados: dados_csv }
     end
     
-    puts "Dados exportados para o arquivo CSV com sucesso: #{csv_file_path}"
+    puts "Dados exportados com sucesso: #{csv_file_path}"
   end
 
     
@@ -193,7 +195,7 @@ module Modular
         end
     end
     
-    def self.get_file_js
+    def self.get_filename_js
       @@path
     end
     
