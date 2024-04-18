@@ -38,8 +38,6 @@ DATABASE.authenticate()
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
 
 //LIDA COM O PROCESSO DE CONFIG STYLE
@@ -54,7 +52,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // Permite a requisição de
 app.use(bodyParser.json()); // Lida com JSON, como tipo de requisição 
 const upload = multer();// Lidar com processamento de informações do fomrulário
 
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 //ROTAS GET PARA REDIRECIONAMENTO 
 
