@@ -35,13 +35,13 @@ DATABASE.authenticate()
 
   
 // const username = os.userInfo().username;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 app.set('view engine', 'ejs');
 // Definir o diretório de visualizações
 app.set('views', path.join(__dirname, 'views'));
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 //LIDA COM O PROCESSO DE CONFIG STYLE
 app.use(express.static('su_modular'));
