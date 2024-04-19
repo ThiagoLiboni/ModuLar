@@ -12,8 +12,8 @@ export const DATABASE = new Sequelize({
     password: `${process.env.DB_PASSWORD}`,
     host: `${process.env.DB_HOST}`,
     dialect: 'mysql',
-  dialectModule: mysql2,
-  benchmark: true
+    dialectModule: mysql2,
+    benchmark: true
 });
 
 

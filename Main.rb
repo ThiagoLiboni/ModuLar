@@ -5,10 +5,7 @@ require 'json'
 require 'ostruct'
 require 'bridge.rb'
 require 'csv'
-
-
-
-
+require_relative 'connection_db.rb'
 
 
 module Modular
@@ -99,10 +96,12 @@ module Modular
         end
       end
       dados_csv = CSV.read(csv_file_path, headers: true, col_sep: ';')
-      erb :ReckonsHome, locals: { dados: dados_csv }
-    end
-    
+      Connection_DB.insert_data_into_db(@@dados)
+      Connection_DB.replace_table_data(@@dados)
+
+    end    
     puts "Dados exportados com sucesso: #{csv_file_path}"
+    
   end
 
     

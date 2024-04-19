@@ -33,13 +33,7 @@ DATABASE.authenticate()
   });
 
 
-  
-// const username = os.userInfo().username;
-
-app.set('view engine', 'ejs');
-// Definir o diretório de visualizações
-app.set('views', path.join(__dirname, 'views'));
-
+  // const username = os.userInfo().username;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -179,7 +173,8 @@ app.post('/SaveTex', (req, res) => {
 //GERAR RELAÇÃO DE PEÇAS POR PROJETO
 
 app.get("/Modular/Reckons", async (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/ReckonsHome.html.erb"))
+
+  res.render("Reckons/ReckonsHome");
   // const file = "dados_componentes.csv"
 
   // const Projeto = []
