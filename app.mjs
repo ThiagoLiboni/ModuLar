@@ -33,9 +33,14 @@ DATABASE.authenticate()
   });
 
 
-  // const username = os.userInfo().username;
+
+  
+// const username = os.userInfo().username;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+
 
 //LIDA COM O PROCESSO DE CONFIG STYLE
 app.use(express.static('su_modular'));
@@ -49,7 +54,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // Permite a requisição de
 app.use(bodyParser.json()); // Lida com JSON, como tipo de requisição 
 const upload = multer();// Lidar com processamento de informações do fomrulário
 
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 //ROTAS GET PARA REDIRECIONAMENTO 
 
@@ -173,8 +179,12 @@ app.post('/SaveTex', (req, res) => {
 //GERAR RELAÇÃO DE PEÇAS POR PROJETO
 
 app.get("/Modular/Reckons", async (req, res) => {
+<<<<<<< HEAD
 
   res.render("Reckons/ReckonsHome");
+=======
+  res.render("Reckons/ReckonsHome")
+>>>>>>> 358b3c3880e295e16bf5dc7ed3594eb03f96a8a2
   // const file = "dados_componentes.csv"
 
   // const Projeto = []
