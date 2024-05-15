@@ -729,6 +729,9 @@ if (verificarPagina == storedID) {
 
     const status = document.getElementById('status');
 
+
+    //PERSONALIZA UM ALERTE PARA DECISÃO DE CANCELAR UM ORÇAMENTO
+
     function AlertPersonalized() {
         Swal.fire({
             title: 'Tem certeza que deseja cancelar?',
@@ -771,37 +774,41 @@ if (verificarPagina == storedID) {
         });
     }
 
-    function salvar(payment,value,condition){
+    //FUNÇÃO PARA SALVAR AS INFORMAÇÕES DO ORÇAMENTO EM JSON
+
+    function salvar(payment, value, condition) {
         let projeto = document.getElementById('projetoName').textContent
         let cliente = document.getElementById('clienteName').value
         let formaPagamento = payment
         let valor = value
         let condicao = condition
 
-        const objeto = { projeto: `${projeto}`,
-                         cliente: `${cliente}`,
-                         formaPagamento: `${formaPagamento}`,
-                         valor: `${valor}`,
-                         condição: `${condicao}` }
-        
+        const objeto = {
+            projeto: `${projeto}`,
+            cliente: `${cliente}`,
+            formaPagamento: `${formaPagamento}`,
+            valor: `${valor}`,
+            condição: `${condicao}`
+        }
+
         const jsonString = JSON.stringify(objeto);
 
         fetch('/saveBudget', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: jsonString
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: jsonString
         })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Erro ao enviar a solicitação.');
-            }
-            console.log('Objeto JavaScript foi gravado como JSON com sucesso.');
-          })
-          .catch(error => {
-            console.error('Erro:', error);
-          });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao enviar a solicitação.');
+                }
+                console.log('Objeto JavaScript foi gravado como JSON com sucesso.');
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
 
     }
 
@@ -809,6 +816,7 @@ if (verificarPagina == storedID) {
 
 
 
+    //VERIFICA A SELEÇÃO DE STATUS DO ORÇAMENTO
 
     status.addEventListener('change', function (e) {
         const selectedOption = e.target.value;
@@ -825,16 +833,18 @@ if (verificarPagina == storedID) {
 
             let pagamentoAdicionado = false
             let formPagamentoAdicionado = false
-            
+
             if (formPay) {
                 document.getElementById('add_pay').addEventListener('click', () => {
-                    
-                    if(!pagamentoAdicionado){
+
+                //CRIA A ESTRUTURA DE FORMAS DE PAGAMENTO E EXIBE NA TELA
+
+                    if (!pagamentoAdicionado) {
 
 
-                    const payment = document.createElement('div')
-                    payment.style.marginTop = "50px";
-                    payment.innerHTML = `
+                        const payment = document.createElement('div')
+                        payment.style.marginTop = "50px";
+                        payment.innerHTML = `
                                                         <label for="payment" class="form-label">Forma de pagamento</label>
                                                         <select id="type_pay" class="form-select" name = "payment" required>
                                                         <option selected></option>
@@ -844,128 +854,131 @@ if (verificarPagina == storedID) {
                                                         <option value ="PIX">PIX</option>
                                                         </select></div>
                                                         `
-                                                        
-                                                        pay.appendChild(payment)
-                                                        
-                                                        pagamentoAdicionado = true
-                                                    }
-                                                    
-                    
-                    
-                                                    let descontoCriado = false
-                                                    let saveCriado = false
-                    
+
+                        pay.appendChild(payment)
+
+                        pagamentoAdicionado = true
+                    }
+
+
+
+                    let descontoCriado = false
+                    let saveCriado = false
+
+
+                    // INDENTIFICA A FORMA DE PAGAMENTO E SALVA O ORÇAMENTO    
+
                     if (pagamentoAdicionado && !formPagamentoAdicionado) {
                         document.getElementById('type_pay').addEventListener('change', (e) => {
-                            
-                            if(!saveCriado){
-                            let save = document.createElement('button')
-                            save.type = "button";
-                            save.textContent = "Salvar";
-                            save.id = "salvar"
-                            save.style.marginTop="20px"
-                            pay.appendChild(save)
-                            saveCriado = true
+
+                            if (!saveCriado) {
+                                let save = document.createElement('button')
+                                save.type = "button";
+                                save.textContent = "Salvar";
+                                save.id = "salvar"
+                                save.style.marginTop = "20px"
+                                pay.appendChild(save)
+                                saveCriado = true
                             }
-                            
+
                             let type_payment = e.target.value;
                             console.log(type_payment)
 
-                            
-                            if (type_payment == "Dinheiro" || type_payment == "Debito") {
-                                
-                                if(!descontoCriado){
-                                    let a = document.createElement('div')
-                                a.style.display="flex"
-                                a.style.justifyContent="space-between"
-                                a.id="pagamento"
-                                
-                                pay.insertBefore(a, pay.lastChild)
-                                
 
-                                let b = document.createElement('div')
-                                a.appendChild(b)
-                                
-                                let label = document.createElement('label')
-                                label.textContent = "Desconto (%)"
-                                label.style.marginRight="10px"
-                                
-                                let desconto = document.createElement('input')
-                                
-                                desconto.id = "desconto"
-                                desconto.style.marginTop = "20px"
-                                desconto.style.width = "50px"
-                                
-                                
-                                b.appendChild(label)
-                                b.appendChild(desconto)
-                                
-                                let c = document.createElement('div')
-                                c.style.display="flex"
-                                c.style.flexDirection="column"
-                                c.style.alignItems="flex-end"
-                                
-                                let v = 20000
-                                let d = 0
-                                
-                                let valorProjeto = document.createElement('div')
-                                valorProjeto.innerHTML = `<span style= "color:grey;">Valor do Projeto:  </span> R$${v} <br>`
-                                valorProjeto.style.marginTop= "20%"
-                                
-                                let valorProjetoDesconto = document.createElement('div')
-                                valorProjetoDesconto.style.marginTop= "5%"
-                                valorProjetoDesconto.style.display="none"
-                                
-                                
-                                
-                                a.appendChild(c)
-                                c.appendChild(valorProjeto)
-                                c.appendChild(valorProjetoDesconto)
-                                
-                                
-                                let condition = "Á vista"
-                                let value;
-                                
-                                if(valorProjeto){
-                                    document.getElementById('desconto').addEventListener('change',(e)=>{
-                                        let descontoAplicado = e.target.value
-                                        console.log(descontoAplicado)
-                                        d = v-((descontoAplicado/100)*v)
-                                        valorProjetoDesconto.innerHTML = `<span style= "color:grey;">Valor com Desconto:</span> R$${d} <br>`
-                                        valorProjetoDesconto.style.display="initial"
-                                        value = d
+                            if (type_payment == "Dinheiro" || type_payment == "Debito") {
+
+                                if (!descontoCriado) {
+                                    let a = document.createElement('div')
+                                    a.style.display = "flex"
+                                    a.style.justifyContent = "space-between"
+                                    a.id = "pagamento"
+
+                                    pay.insertBefore(a, pay.lastChild)
+
+
+                                    let b = document.createElement('div')
+                                    a.appendChild(b)
+
+                                    let label = document.createElement('label')
+                                    label.textContent = "Desconto (%)"
+                                    label.style.marginRight = "10px"
+
+                                    let desconto = document.createElement('input')
+
+                                    desconto.id = "desconto"
+                                    desconto.style.marginTop = "20px"
+                                    desconto.style.width = "50px"
+
+
+                                    b.appendChild(label)
+                                    b.appendChild(desconto)
+
+                                    let c = document.createElement('div')
+                                    c.style.display = "flex"
+                                    c.style.flexDirection = "column"
+                                    c.style.alignItems = "flex-end"
+
+                                    let v = 20000
+                                    let d = 0
+
+                                    let valorProjeto = document.createElement('div')
+                                    valorProjeto.innerHTML = `<span style= "color:grey;">Valor do Projeto:  </span> R$${v} <br>`
+                                    valorProjeto.style.marginTop = "20%"
+
+                                    let valorProjetoDesconto = document.createElement('div')
+                                    valorProjetoDesconto.style.marginTop = "5%"
+                                    valorProjetoDesconto.style.display = "none"
+
+
+
+                                    a.appendChild(c)
+                                    c.appendChild(valorProjeto)
+                                    c.appendChild(valorProjetoDesconto)
+
+
+                                    let condition = "Á vista"
+                                    let value;
+
+                                    if (valorProjeto) {
+                                        document.getElementById('desconto').addEventListener('change', (e) => {
+                                            let descontoAplicado = e.target.value
+                                            console.log(descontoAplicado)
+                                            d = v - ((descontoAplicado / 100) * v)
+                                            valorProjetoDesconto.innerHTML = `<span style= "color:grey;">Valor com Desconto:</span> R$${d} <br>`
+                                            valorProjetoDesconto.style.display = "initial"
+                                            value = d
+                                        })
+                                    }
+
+                                    if (d == 0) {
+                                        value = v
+                                    } else { value = d }
+
+                                    document.getElementById('salvar').addEventListener('click', () => {
+                                        salvar(type_payment, value, condition)
                                     })
+
+                                    descontoCriado = true
                                 }
-                                
-                                if(d == 0){
-                                    value = v
-                                }else{value = d }
-                                
-                                document.getElementById('salvar').addEventListener('click',()=>{
-                                    salvar(type_payment,value,condition)
-                                })
-                                
-                                descontoCriado=true
-                            }
 
 
 
                             } else if (type_payment == "Credito") {
-                                
-                                if(descontoCriado){
+
+                                if (descontoCriado) {
                                     let a = document.getElementById('pagamento')
                                     a.remove(a)
-                                    descontoCriado=false
+                                    descontoCriado = false
                                 }
-                                
+
                             } else if (type_payment == "PIX") {
-                                
-                                if(descontoCriado){
+
+                                if (descontoCriado) {
                                     let a = document.getElementById('pagamento')
                                     a.remove(a)
-                                    descontoCriado=false
+                                    descontoCriado = false
                                 }
-                                
+
                             }
                         })
                         formPagamentoAdicionado = true
