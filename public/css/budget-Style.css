@@ -7,18 +7,27 @@ body{
     margin: 0;
     display: flex;
     max-width: 100%;
+    overflow: hidden;
+    
+
 }
 #menu{
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     width: 25%;
+    max-width: 200px;
     height: 100%;
     border-right: 1px solid rgba(87, 87, 87, 0.616);
     padding-right: 10px;
+    white-space: nowrap;
+    font-size: 80%;
+
+   
 }
 
-#table-project{
+.table-project{
     border-collapse: collapse;
     width: 100%;
     margin-left: 30px;
@@ -34,17 +43,18 @@ table{
 }
 
 .th_ {
-    border: 1px solid black;
+    border: 0.5px solid rgb(161, 160, 160);
     padding: 2px;
     text-align: left;
     white-space: nowrap;
     text-align: center;
     font-size: 12px;
-    
+    color: rgb(128, 154, 200);
+
 }
 
 th {
-    background-color: #aaaaaa;
+    background-color: #1e1e1e;
 }
 
 .th_n{width:6%}
@@ -68,4 +78,95 @@ th {
     cursor: pointer;
     color: blue;
    
+}
+
+#head{
+    display: none ;
+    width: 35%;
+}
+
+@media screen and (max-width: 768px){
+    .search {
+        flex-direction: column!important ;
+        height: auto!important ;
+        align-items: stretch!important ;
+        margin: 0 !important;
+    }
+    .item-search{
+        margin: 10px 0!important ;
+        
+    }
+    .item-search-input{
+        width: 100%!important; 
+    }
+    
+    #t_project{
+        margin: 20px 0 !important;
+    }
+    
+    #head{
+        
+        margin: 0 0 20px 25% !important;
+        max-width: none;
+        min-width: 400px;
+        
+    }
+    
+    .op_registro_a{
+        font-size: 10px !important;
+    }
+    
+}
+
+
+.op_registro{
+    margin: 0 10px;
+}
+
+.op_registro_a{
+    text-decoration:none;
+    color: rgb(77, 75, 75);
+    font-size: 1vw;
+    font-family: 'Times New Roman', Times, serif;
+    text-transform: uppercase;
+    white-space: nowrap;
+    
+}
+
+.op_registro_a:hover,
+.op_registro:hover{
+    scale: 1.1;
+    color: blue;
+}
+
+
+.transition-Start-head{
+    display: flex !important;
+    animation: FadeInMove 0.4s ease-out;
+    animation-delay: 0.5s;
+    animation-fill-mode: forwards ;
+    opacity: 0;
+    
+    
+}
+
+@keyframes FadeInMove{
+    0% {
+        
+        
+        opacity: 0;
+        width: 0;
+        
+    }
+    50% {
+        
+        opacity: 1;
+        width: 35vw;
+        
+    }   
+    100% {
+        
+        opacity: 1;
+        width: 50vw;
+    }
 }

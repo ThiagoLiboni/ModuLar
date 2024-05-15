@@ -1,0 +1,23 @@
+[
+    {
+        "projeto": "Sala.skp",
+        "cliente": "Muriel Marçola ",
+        "formaPagamento": "Dinheiro",
+        "valor": "20000",
+        "condição": "Á vista"
+    },
+    {
+        "projeto": "Sala.skp",
+        "cliente": "Muriel Marçola ",
+        "formaPagamento": "Dinheiro",
+        "valor": "4000",
+        "condição": "Á vista"
+    },
+    {
+        "projeto": "Cozinha.skp",
+        "cliente": "Jonas Jesus",
+        "formaPagamento": "Dinheiro",
+        "valor": "13400",
+        "condição": "Á vista"
+    }
+]

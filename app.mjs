@@ -1,44 +1,47 @@
 ﻿import express from 'express';//Gerenciador de rotas
+import router from './routes/routes.js';
+import routes_app from './routes/routes_app.js';
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 import path from 'path';
 import { dirname} from 'path';
 import { fileURLToPath } from 'url';
 
-import {DATABASE} from './db/config/db_config.js';
-import VENDEDOR from './db/model/Vendedor.js';
-import CLIENTE from './db/model/Cliente.js';
-import PROJETO from './db/model/Projetos.js';
+import {connection} from './db/config/db_config.js';
+import {CLIENTE} from './db/model/Cliente.js'
+import {VENDEDOR} from './db/model/Vendedor.js';
+import {PROJETOS} from './db/model/Projetos.js';
 
 import multer from 'multer';
 
-import fs from 'fs'
 import bodyParser from 'body-parser';
-import https from 'https';
 
 import os from 'os';
-import * as csv from "csv";
-import { where } from 'sequelize';
+import { stringify } from 'querystring';
+
+
 
 let port = process.env.PORT || 3000;
 
+// export const username = os.userInfo().username;
+
 const app = express();
-
-//Conectar ao banco de dados
-DATABASE.authenticate()
-  .then(() => {
-    console.log("Conexão com banco de dados feita com sucesso!");
-  })
-  .catch(() => {
-    console.log("Conexão com banco de dados não estabelecida");
-  });
-
-
-  
-// const username = os.userInfo().username;
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const upload = multer();// Lidar com processamento de informações do fomrulário
+
+
+//CONECTAR AO BANCO DE DADOS
+connection.connect(function(err) {
+  if (err) throw err
+  console.log('Connected')
+  
+});
+
+  
 //LIDA COM O PROCESSO DE CONFIG STYLE
 app.use(express.static('su_modular'));
 app.use('/public', express.static(path.join(__dirname, '/public'), { extensions: ['css'] }));
@@ -46,179 +49,41 @@ app.use('/public', express.static(path.join(__dirname, '/public'), { extensions:
 app.use('/js', express.static(path.join(__dirname, '/js'), { extensions: ['js'] }));
 app.use('/Storage', express.static(path.join(__dirname, 'Storage')));
 
+
 app.use(express.text());
 app.use(bodyParser.urlencoded({ extended: true })); // Permite a requisição de arrays e objetos
 app.use(bodyParser.json()); // Lida com JSON, como tipo de requisição 
-const upload = multer();// Lidar com processamento de informações do fomrulário
 
 
 
 //ROTAS GET PARA REDIRECIONAMENTO 
-
-app.get('/', (req, res) => {
-  res.send("Hello World");
-});
-app.get('/Authentication', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Authentication.html'));
-});
-app.get('/Home', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/index.html"))
-})
-app.get('/component/DRYComponent', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/DRYComponent.html"))
-})
-app.get('/component/WETComponent', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/WETComponent.html"))
-})
-app.get('/Materials', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Materials.html"))
-})
-app.get('/Materials/MDF', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Materials.html"))
-})
-// app.get('/Modular/Reckons', (req, res) => {
-//   res.sendFile(path.join(__dirname, "views/Reckons/ReckonsHome.html"))
-// })
-app.get('/Modular/Reckons/Cutplan', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/ReckonsCutPlan.html"))
-})
-app.get('/Modular/Register/SellerRegistration', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/Register/new_User.html"))
-});
-app.get('/Modular/Register/CustumerRegistration', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/Register/new_User.html"))
-});
-app.get('/Modular/RegisterProject', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/Register/new_project.html"))
-});
-app.get('/Modular/Projects', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/budget.html"))
-});
-app.get('/Modular/Budget-Guide/:id', (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/budgetGuide.html"))
-
-});
+app.get('/Authentication', router);
+app.get('/Home', router);
+app.get('/component/DRYComponent', router);
+app.get('/component/WETComponent', router);
+app.get('/Materials', router);
+app.get('/Materials/MDF', router);
+app.get('/Modular/Reckons/Cutplan', router);
+app.get('/Modular/Register/SellerRegistration', router);
+app.get('/Modular/Register/CustumerRegistration', router);
+app.get('/Modular/RegisterProject', router);
+app.get('/Modular/Projects', router);
+app.get('/Modular/Budget-Guide/:id',router);
+app.get('/Modular/BudgetProcessed', router);
+app.get("/Modular/Reckons", router);
 
 
-
-
-
-// const destino = path.join( // destino download
-//   process.env.APPDATA,
-//   'SketchUp',
-//   'SketchUp 2022',
-//   'SketchUp',
-//   'Components')
-
-// // EFETUAR O DOWNLOAD DOS COMPONENTES PARA PASTA LOCAL
-// app.post('/download', (req, res) => {
-//   const url = req.body.URL;
-//   const arquivoNome = `${req.body.Nome}.skp`;
-//   const caminhoCompleto = path.join(destino, arquivoNome);
-
-//   if (fs.existsSync(caminhoCompleto)) { //confere a existência do arquivo
-//     fs.unlinkSync(caminhoCompleto); //  limpar para reescrever.
-//     fs.closeSync(fs.openSync(caminhoCompleto, 'w'));
-//   }
-
-//   if (!fs.existsSync(caminhoCompleto)) { // confere a inexistência para que possa ser gerado..
-//     fs.closeSync(fs.openSync(caminhoCompleto, 'w'));
-//   }
-
-//   if (!fs.existsSync(destino)) { // confere a inexistência do caminho para que possa ser gerado..
-//     fs.mkdirSync(destino, { recursive: true });
-//   }
-
-//   const arquivo = fs.createWriteStream(caminhoCompleto);
-
-//   https.get(url, (response) => {
-//     response.pipe(arquivo);
-
-//     arquivo.on('finish', () => {
-//       arquivo.close(() => {
-
-//         const responseData = { message: 'Download concluído com sucesso' };
-//         res.status(200).json(responseData);
-//       });
-//     });
-//   }).on('error', (err) => {
-//     fs.unlink(caminhoCompleto, () => {
-//       console.error(`Erro durante o download: ${err.message}`);
-//       res.status(500).send('Erro durante o download');
-//     });
-//   });
-// });
-
+// EFETUAR O DOWNLOAD DOS COMPONENTES PARA PASTA LOCAL
+app.post('/download', routes_app);
 
 //GUARDAR RELAÇÃO DE COMPONENTES 
-app.post('/savedData', (req, res) => {
-  const dados = req.body.Data;
+app.post('/savedData', routes_app);
 
-  const dataJSON = JSON.stringify(dados)
-  fs.writeFileSync('Storage/dryStorage.json', dataJSON);
+//SALVAR NOVAS TEXTURAS
+app.post('/SaveTex', routes_app);
 
-
-  res.send('Dados salvos com sucesso.')
-})
-
-
-//CADASTRAR NOVAS TEXTURAS
-app.post('/SaveTex', (req, res) => {
-
-  const dados = req.body.Data;
-
-  const dataJSON = JSON.stringify(dados)
-  fs.writeFileSync('Storage/Texture.json', dataJSON);
-  res.send('Dados Salvos com Sucesso.')
-})
-
-//GERAR RELAÇÃO DE PEÇAS POR PROJETO
-
-app.get("/Modular/Reckons", async (req, res) => {
-  res.sendFile(path.join(__dirname, "views/Reckons/ReckonsHome.html"))
-  const file = "dados_componentes.csv"
-
-  const Projeto = []
-  const Elemento = []
-  const Comprimento = []
-  const Largura = []
-  const Espessura = []
-
-  fs.createReadStream(file)
-    .pipe(csv.parse({ columns: true, delimiter: ';' }))
-    .on('data', (dadosLinha) => {
-      // Adicionando o valor da segunda coluna de cada linha ao array
-      Projeto.push(dadosLinha['Projeto'] || null);
-      Elemento.push(dadosLinha['Elemento'] || null);
-      Comprimento.push(dadosLinha['Comprimento'] || null);
-      Largura.push(dadosLinha['Largura'] || null);
-      Espessura.push(dadosLinha['Espessura'] || null);
-    })
-    .on('end', () => {
-      const dadosJSON = {
-        Projeto: Projeto,
-        Elemento: Elemento,
-        Comprimento: Comprimento,
-        Largura: Largura,
-        Espessura: Espessura
-      };
-      console.log(dadosJSON);
-      console.log('Importação concluída');
-
-      const local = path.join(__dirname, 'Storage/table.json');
-      fs.writeFileSync(local, JSON.stringify(dadosJSON));
-    })
-
-    .on('error', (err) => {
-      console.error('Erro ao ler o arquivo CSV:', err);
-      return res.status(500).send("Erro ao ler o arquivo CSV");
-    });
-
-});
-
-
-
-
+//SALVAR NOVAS TEXTURAS
+app.post('/saveBudget', routes_app);
 
 
 //CADASTRAR NOVO VENDEDOR
@@ -228,7 +93,7 @@ app.post('/Vendedor', upload.none(), async (req, res) => { //Upload.none() ==== 
     const contato = data.phone
     const CONTATO = contato.replace(/[()\s-]/g, '')// Remover os caracteres de formatação (pontos e traços) do CPF
     const endereco = `${data.endereco},  ${data.complemento} - ${data.bairro}`
-    const newSeller = {
+    const Seller = {
       Contato: CONTATO,
       Nome: data.nome,
       Email: data.email,
@@ -236,10 +101,10 @@ app.post('/Vendedor', upload.none(), async (req, res) => { //Upload.none() ==== 
       Cidade: data.cidade,
       Estado: data.estado
     }
-
-    const user = await VENDEDOR.create(newSeller);// Inserir o novo usuário no banco de dados
-    console.log('Novo usuário inserido:', user.toJSON());
-    console.log(`Dados recebidos: Vendedor: ${newSeller.Nome}`)
+    const vendedor = await new VENDEDOR()
+    vendedor.INSERT(Seller);// Inserir o novo usuário no banco de dados
+    
+    // console.log(`Dados recebidos: Vendedor: ${Seller.Nome}`)
 
     res.status(200).send('Dados do formulário recebidos com sucesso!');
   } catch (error) {
@@ -258,7 +123,7 @@ app.post('/Cliente', upload.none(), async (req, res) => { //Upload.none() ==== I
     const cpf = data.cpf
     const CPF = cpf.replace(/[.-]/g, ''); // Remover os caracteres de formatação (pontos e traços) do CPF
     const endereco = `${data.endereco},  ${data.complemento} - ${data.bairro}`
-    const newClient = {
+    const Client = {
       CPF: CPF,
       Nome: data.nome,
       Contato: data.phone,
@@ -268,10 +133,10 @@ app.post('/Cliente', upload.none(), async (req, res) => { //Upload.none() ==== I
       Estado: data.estado
     };
 
+    const cliente =  new CLIENTE();
+    await cliente.INSERT(Client)// Inserir o novo usuário no banco de dados
 
-    const user = await CLIENTE.create(newClient);// Inserir o novo usuário no banco de dados
-    console.log('Novo cadastro inserido:', user.toJSON());
-    console.log(`Dados recebidos: Cliente: ${newClient.Nome}`)
+    // console.log(`Dados recebidos: Cliente: ${Client.Nome}`)
 
     res.status(200).send('Dados do formulário recebidos com sucesso!');
   } catch (error) {
@@ -287,23 +152,23 @@ app.post('/Projetos', upload.none(), async (req, res) => { //Upload.none() ==== 
   try {
     const data = req.body;
     const vendedor = data.vendedor;
-    const projeto = data.projeto;
+    const nome_projeto = data.projeto;
     const data_projeto = data.dataProjeto;
     const data_final = data.dataFinal;
     const cliente = data.cliente;
 
     const projetos = {
       Cliente: cliente,
-      Projeto: projeto,
+      Projeto: nome_projeto,
       Data_Projeto: data_projeto,
       Data_Orcamento: data_final,
       Vendedor: vendedor,
       Status_process: 'Aberto'
     }
+    const PROJETO =  new PROJETOS();
+    await PROJETO.INSERT(projetos);// Inserir o novo usuário no banco de dados
 
-    const user = await PROJETO.create(projetos);// Inserir o novo usuário no banco de dados
-    console.log('Novo projeto inserido:', user.toJSON());
-    console.log(`Dados recebidos: Projeto: ${projetos.Projeto},  Cliente: ${projetos.Cliente}`)
+    // console.log(`Dados recebidos: Projeto: ${projetos.Projeto},  Cliente: ${projetos.Cliente}`)
 
 
     res.status(200).send('Dados do projeto recebidos com sucesso!');
@@ -312,26 +177,25 @@ app.post('/Projetos', upload.none(), async (req, res) => { //Upload.none() ==== 
     console.error('Erro durante o processamento do formulário:', error);
     res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');
   }
+
 })
+
 
 //ACESSAR LISTA DOS NOMES DE CLIENTES E VENDEDORES;
 app.get('/catchNames', async (req, res) => {
   try {
-    const Cliente = await CLIENTE.findAll({
-      attributes: ['Nome']
-    });
-    const Vendedor = await VENDEDOR.findAll({
-      attributes: ['Nome']
-    });
+    const NOME =  "Nome"
 
-
-    const clientes = Cliente.map(cliente => cliente.Nome);
-    const vendedores = Vendedor.map(vendedor => vendedor.Nome);
+    const nomes_clientes =  new CLIENTE();
+    const Cliente = await nomes_clientes.SELECT_COLUMN(NOME)
+    
+    const nomes_vendedores =  new VENDEDOR();
+    const Vendedor = await nomes_vendedores.SELECT_COLUMN(NOME)
 
     // Agrupe os dados em um objeto
     const data = {
-      clientes: clientes,
-      vendedores: vendedores
+      clientes: Cliente,
+      vendedores: Vendedor
     };
 
     // Envie o objeto como resposta JSON
@@ -341,11 +205,39 @@ app.get('/catchNames', async (req, res) => {
   }
 });
 
+
 // ACESSAR A TABELA PROJETOS
 app.get('/tableProjetos', async (req, res) => {
 
-  try {
-    const data = await PROJETO.findAll();
+    try {
+      const column = "Status_process";
+      const value = "Aberto"
+      
+      const projetos = new PROJETOS();
+      
+      const data = await projetos.SELECT_WHERE(column,value);
+      
+      // console.log(data)
+      
+      res.json(data)
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao obter a relação de projetos' })
+    }
+    
+  })
+  
+  app.get('/budgetProcessed', async (req, res) => {
+    
+    try {
+      
+    const column = "Status_process";
+    const value = ["Cancelado","Concluido"];
+
+    const projetos = new PROJETOS();
+
+    const data = await projetos.SELECT_WHERE_IN(column,value);
+    
+    // console.log(data)
 
     res.json(data)
   } catch (error) {
@@ -358,7 +250,11 @@ app.get('/tableProjetos', async (req, res) => {
 app.get('/tableClientes', async (req, res) => {
 
   try {
-    const data = await CLIENTE.findAll();
+
+
+    const cliente = new CLIENTE()
+
+    const data = await cliente.SELECT();
 
     res.json(data)
   } catch (error) {
@@ -367,25 +263,79 @@ app.get('/tableClientes', async (req, res) => {
 
 })
 
-app.post('/canceledOrder', async (req, res) => {
+app.post('/orderStatusChanged', async (req, res) => {
   try {
+    const column_status = "Status_process";
+    const column_id = "id_relatorio";
+    const ID = req.body.id
+    const status = req.body.status
+
+    const projetos = new PROJETOS();
+    const budget = await projetos.UPDATE(column_status,status,column_id,ID)
+
+    res.status(200).send('Status atualizado com sucesso!');
     
-    const id = req.body
-
-    const order = await PROJETO.update({Status_process:"Cancelado"}, {
-      where: {
-        id_relatorio: id
-      }
-    })
-    console.log('Status atualizado com sucesso')
-    res.status(200).send('Status atualizados')
-
-  
-
   }catch(error){
     console.error('Erro durante o processamento do formulário:', error);
-  res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');}
+    res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');}
+  })
+  
+  let optionFilter
+  app.post('/filterTable', upload.none(),  async (req, res)=>{
+    try{
+      optionFilter = req.body.filter
+  
+      
+      res.status(200).send('Requisição de filtro com sucesso!');
+  }
+  catch(error){
+    console.error('Erro durante o processamento do formulário:', error);
+    res.status(500).send('Ocorreu um erro durante o processamento do formulário. Por favor, tente novamente.');
+  }
 })
+
+app.get('/ShowTable', async (req, res) => {
+  try {
+    const option = optionFilter
+    const column_status = "Status_process";
+    const column_value = "Aberto";
+    const projetos = new PROJETOS();
+    const filteredData = await projetos.ORDER_BY(column_status, column_value, option); // Use optionFilter para filtrar os dados
+    res.json(filteredData);
+  } catch (error) {
+    console.error('Erro ao obter os dados filtrados:', error);
+    res.status(500).send('Ocorreu um erro ao obter os dados filtrados. Por favor, tente novamente.');
+  }
+});
+
+
+app.get('/ShowTableProcessed', async (req, res) => {
+  try {
+    const option = optionFilter
+    const column_status = "Status_process";
+    const column_value = ["Concluido","Cancelado"];
+    const projetos = new PROJETOS();
+    const filteredData = await projetos.ORDER_BY_WHERE(column_status, column_value, option); // Use optionFilter para filtrar os dados
+    res.json(filteredData);
+  } catch (error) {
+    console.error('Erro ao obter os dados filtrados:', error);
+    res.status(500).send('Ocorreu um erro ao obter os dados filtrados. Por favor, tente novamente.');
+  }
+});
+
+app.get('/nameSearch', async (req, res) => {
+  try {
+    const value = optionFilter
+    const column1 = ["Cliente"];
+    const column2 = ["Vendedor"];
+    const projetos = new PROJETOS();
+    const filteredData = await projetos.SELECT_WHERE_OR(column1,column2,value); // Use optionFilter para filtrar os dados
+    res.json(filteredData);
+  } catch (error) {
+    console.error('Erro ao obter os dados filtrados:', error);
+    res.status(500).send('Ocorreu um erro ao obter os dados filtrados. Por favor, tente novamente.');
+  }
+});
 
 
 

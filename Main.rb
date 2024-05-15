@@ -5,6 +5,8 @@ require 'json'
 require 'ostruct'
 require 'bridge.rb'
 require 'csv'
+# require 'msql2'
+# require 'active_record'
 
 
 
@@ -45,6 +47,8 @@ module Modular
     
     @@dados = []
     @@path = ""
+
+
     def self.add_selection_observer
       observer = Modular::Main::ComponentObserver.new
       Sketchup.active_model.selection.add_observer(observer)
@@ -83,123 +87,73 @@ module Modular
     end
     
 
-   def self.exportTable
-    if @@path
-      csv_file_path = 'dados_componentes.csv'
-      CSV.open(csv_file_path, 'wb', col_sep: ';') do |csv|
-        # Escreve a primeira linha da tabela
-        csv << ["Projeto", "Elemento", "Comprimento", "Largura", "Espessura"]
-      
-        # Escreve a segunda linha apenas com o resultado de self.get_file_js
-        csv << [self.get_file_js]
-      
-        # Itera sobre os dados e escreve as linhas subsequentes da tabela
-        @@dados.each do |dado|
-          csv << ["",dado[:elemento], dado[:comprimento], dado[:largura], dado[:espessura]]
+
+    # Gera arquivo de tabela com informações do modelo e dimensões do componente 
+    def self.exportTable
+      if @@path
+        csv_file_path = 'dados_componentes.csv'
+        CSV.open(csv_file_path, 'wb', col_sep: ';') do |csv|
+          # Escreve a primeira linha da tabela
+          csv << ["Projeto", "Elemento", "Comprimento", "Largura", "Espessura", "Grupo"]
+        
+          # Escreve a segunda linha apenas com o resultado de self.get_file_js
+          csv << [self.get_file_js]
+        
+          # Itera sobre os dados e escreve as linhas subsequentes da tabela
+          @@dados.each do |dado|
+            csv << ["",dado[:elemento], dado[:comprimento], dado[:largura], dado[:espessura], dado[:grupo]]
+          end
         end
       end
-    end
-    
-    puts "Dados exportados para o arquivo CSV com sucesso: #{csv_file_path}"
-  end
-
-    
-
-    def self.auto_start
-      self.home_toolbar
-      self.start_node_server
-      self.home_html_dialog
-    end
-
-    # inicia uma sessão com servidor Node
-    def self.start_node_server
-        # Verifique se o servidor Node.js já está em execução
-        
-        if @node_server_pid.nil? || !Process.kill(0, @node_server_pid)
-          # Inicie o servidor Node.js em segundo plano
-          auth_login_mjs_path = File.join(__dir__, 'app.mjs')
-          @node_server_pid = spawn('node', auth_login_mjs_path)
-          
-          # Aguarde um momento para garantir que o servidor esteja pronto
-          sleep(2)
-        end
-    end
-
-    # cria um ambiente de interação com HTML
-    def self.home_html_dialog
       
-      start_node_server #iniciar o servidor
-
-      dialog = UI::HtmlDialog.new(
-        {
-          :dialog_title => "Ambientes Planejados",
-          :preferences_key => "com.sample.plugin",
-          :scrollable => true,
-          :resizable => true,
-          
-        })
-        
-            
-            dialog.set_url("http://127.0.0.1:3000/Authentication")
-            ML::Modular::Bridge.decorate(dialog)
-            
-          # Abre o diálogo
-          dialog.show
-          dialog.add_action_callback("get") do |action_context, url|
-            Modular::Main.ref(url)
-            
-          end
-          
-          dialog.add_action_callback("getTex") do |action_context, url, name|
-            
-            Modular::Main.apply_texture(url,name)
-            puts nome, url
-          end
-
+      puts "Dados exportados para o arquivo CSV com sucesso: #{csv_file_path}"
     end
-        
+
+    
+    # verifica se o modelo esta salvo e atribui o nome à uma variavel
     def self.get_File
-        model = Sketchup.active_model
-        if model
-          file_name = model.path
-          if file_name.empty?
-            puts "O modelo não foi salvo ainda."
-                        # Abre a janela de "Salvar Como"
-            file_path = UI.savepanel("Salvar Como", "", "Modelos do SketchUp (*.skp)|*.skp||")
-            # Verifica se o usuário selecionou um arquivo
-            if file_path
-              # Salva o modelo com o caminho especificado
-              Sketchup.active_model.save(file_path)
-              puts "Modelo salvo em: #{file_path}"
+      model = Sketchup.active_model
+      if model
+        file_name = model.path
+        if file_name.empty?
+          puts "O modelo não foi salvo ainda."
+          # Abre a janela de "Salvar Como"
+          file_path = UI.savepanel("Salvar Como", "", "Modelos do SketchUp (*.skp)|*.skp||")
+          # Verifica se o usuário selecionou um arquivo
+          if file_path
+            # Salva o modelo com o caminho especificado
+                Sketchup.active_model.save(file_path)
+                puts "Modelo salvo em: #{file_path}"
+                @@path = file_name
+                self.exportTable
+                puts "tabela criada"
+                return nil
+              else
+                  # Se o usuário cancelou a operação, nil será retornado
+                  puts "Operação de salvar como cancelada."
+                  return nil
+              end
+            else
+              puts "Modelo: #{file_name}"
               @@path = file_name
               self.exportTable
               puts "tabela criada"
-              return nil
-            else
-                # Se o usuário cancelou a operação, nil será retornado
-                puts "Operação de salvar como cancelada."
-                return nil
+              # return File.basename(file_name)
             end
           else
-            puts "Modelo: #{file_name}"
-            @@path = file_name
-            self.exportTable
-            puts "tabela criada"
-            # return File.basename(file_name)
+            puts "Nenhum modelo está aberto no SketchUp no momento."
+            return nil
           end
-        else
-          puts "Nenhum modelo está aberto no SketchUp no momento."
-          return nil
-        end
     end
     
+    # retorna o nome do projeto atual
     def self.get_file_js
       @@path
     end
     
 
     
-     # obtém e insere o componente no modelo.
+     # insere o componente no modelo.
     def self.get_component( url, multi = false )
       filepath = url
       slash(filepath)
@@ -225,82 +179,166 @@ module Modular
         end
       end
     end
-
+    
     # lida com caracteres de endereço
     def self.slash(filepath)
       filepath.gsub!(/\\\\|\\/,'/')
     end
-
+    
+    # recebe a url do componente e retorna para a função de inserir no modelo
     def self.ref(url)
       get_component(url, true)
       puts  "Componente inserido: #{url}"
     end   
+    
+
 
     # Cria e aplica o material recebido
     def self.apply_texture(texture_path, material_name)
       begin
-              # Obtém o modelo ativo do SketchUp
+        # Obtém o modelo ativo do SketchUp
         model = Sketchup.active_model
-
-        existing_material = model.materials[material_name]
-
-        unless existing_material
         
+        existing_material = model.materials[material_name]
+        
+        unless existing_material
+          
           # Cria um novo material
           new_material = model.materials.add(material_name)
-
+          
           # Define a textura do material usando um arquivo PNG
           texture_file = texture_path  # Substitua pelo caminho do seu arquivo PNG
           new_material.texture = texture_file
         end
-
+        
         # Aplica o novo material a um componente ou grupo selecionado (opcional)
         model.selection.grep(Sketchup::ComponentInstance).each do |component|
           component.material = existing_material || new_material
         end
-
-             
-          # Atualiza a visualização para refletir as alterações
-          model.active_view.refresh
-        rescue => e
-          UI.messagebox("Ocorreu um erro #{e.message}")
-          UI.messagebox("O material '#{material_name}' não foi encontrado no modelo.")
+        
+        
+        # Atualiza a visualização para refletir as alterações
+        model.active_view.refresh
+      rescue => e
+        UI.messagebox("Ocorreu um erro #{e.message}")
+        UI.messagebox("O material '#{material_name}' não foi encontrado no modelo.")
       end
     end
- 
-
-     
-    @@toolbar_created = false  # Variável de classe para controlar se a barra de ferramentas foi criada
-      
     
+
+    def self.get_budget
+
+      dialog = UI::HtmlDialog.new(
+        {
+          :dialog_title => "Ambientes Planejados",
+          :preferences_key => "com.sample.plugin",
+          :scrollable => true,
+          :resizable => true,
+          
+        })
+        
+            
+            dialog.set_url("http://localhost:3000/Modular/Reckons")
+            ML::Modular::Bridge.decorate(dialog)
+            
+      dialog.show
+    end
+
+
+    # definir um auto start para as funções ao iniciar o aplicativo
+    def self.auto_start
+      self.home_toolbar
+      self.start_node_server
+      self.home_html_dialog
+    end
+    
+    # inicia uma sessão com servidor Node
+    def self.start_node_server
+        # Verifique se o servidor Node.js já está em execução
+        
+        if @node_server_pid.nil? || !Process.kill(0, @node_server_pid)
+          # Inicie o servidor Node.js em segundo plano
+          auth_login_mjs_path = File.join(__dir__, 'app.mjs')
+          @node_server_pid = spawn('node', auth_login_mjs_path)
+          
+          # Aguarde um momento para garantir que o servidor esteja pronto
+          sleep(2)
+        end
+    end
+    
+    # cria um ambiente de interação com HTML
+    def self.home_html_dialog
+      
+      start_node_server #iniciar o servidor
+    
+      dialog = UI::HtmlDialog.new(
+        {
+          :dialog_title => "Ambientes Planejados",
+          :preferences_key => "com.sample.plugin",
+          :scrollable => true,
+          :resizable => true,
+          
+        })
+        
+            
+            dialog.set_url("http://127.0.0.1:3000/Authentication")
+            ML::Modular::Bridge.decorate(dialog)
+            
+          # Abre o diálogo
+          dialog.show
+          dialog.add_action_callback("get") do |action_context, url|
+            Modular::Main.ref(url)
+            
+          end
+          
+          dialog.add_action_callback("getTex") do |action_context, url, name|
+            
+            Modular::Main.apply_texture(url,name)
+            puts nome, url
+          end
+    
+    end
+        
+    
+    
+    @@toolbar_created = false  # Variável de classe para controlar se a barra de ferramentas foi criada
+    
+    # Criar icones na barra de ferramentas
     def self.create_toolbar
-      return if @@toolbar_created  # Se a barra de ferramentas já foi criada, saia da função
-      cmd_study = UI::Command.new("Estudo") { self.home_html_dialog}
-      toolbar = UI::Toolbar.new "ModuLar"
-      toolbar.add_item cmd_study
+      return if @@toolbar_created 
+      cmd_create = UI::Command.new("Criar Projeto") { self.home_html_dialog}
+      toolbar = UI::Toolbar.new "ModuCad"
+      toolbar.add_item cmd_create
     
       
       cmd_export = UI::Command.new("Exportar") { self.get_File }
 =begin  cmd_export.large_icon = "path_to_large_icon.png" # Substitua "path_to_large_icon.png" pelo caminho para o ícone grande
         cmd_export.small_icon = "path_to_small_icon.png" # Substitua "path_to_small_icon.png" pelo caminho para o ícone pequeno
 =end      
-        cmd_export.tooltip = "Exportar Tabela" # Defina uma dica de ferramenta para o ícone
+        cmd_export.tooltip = "Gerar Tabela" # Defina uma dica de ferramenta para o ícone
       toolbar.add_item cmd_export
+      
+      cmd_budget = UI::Command.new("Calcular") { self.get_budget }
+=begin  cmd_export.large_icon = "path_to_large_icon.png" # Substitua "path_to_large_icon.png" pelo caminho para o ícone grande
+        cmd_export.small_icon = "path_to_small_icon.png" # Substitua "path_to_small_icon.png" pelo caminho para o ícone pequeno
+=end      
+        cmd_export.tooltip = "Gerar Orçamento" # Defina uma dica de ferramenta para o ícone
+      toolbar.add_item cmd_budget
 
       toolbar.show
       @@toolbar_created = true  # Marca a barra de ferramentas como criada
     end
       
-
+    # Retorna o método criar icones na barra de ferramentas
     def self.home_toolbar
-      self.create_toolbar  # Chama o método para criar a barra de ferramentas
+      self.create_toolbar 
     end
     
     
     # Método principal que cria um item no menu do sketchup
     unless file_loaded?(__FILE__)
       menu = UI.menu("Plugins")
-      menu.add_item("Nome do Plugin") {
+      menu.add_item("Modular Application") {
       self.auto_start
       self.home_toolbar
       }

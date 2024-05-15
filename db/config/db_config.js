@@ -1,19 +1,14 @@
 
-import {Sequelize} from 'sequelize';
-import mysql2 from 'mysql2';
-import dotenv from 'dotenv';
 
+import dotenv from 'dotenv';
+import mysql from 'mysql2';
 dotenv.config();
 
-export const DATABASE = new Sequelize({
-
-    database: `${process.env.DB_DATABASE}`,
-    username: `${process.env.DB_USERNAME}`,
-    password: `${process.env.DB_PASSWORD}`,
+export const connection = mysql.createConnection({
     host: `${process.env.DB_HOST}`,
-    dialect: 'mysql',
-  dialectModule: mysql2,
-  benchmark: true
-});
+    user: `${process.env.DB_USERNAME}`,
+    password: `${process.env.DB_PASSWORD}`,
+    database: `${process.env.DB_DATABASE}`
+  })
 
 

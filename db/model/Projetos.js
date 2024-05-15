@@ -1,42 +1,107 @@
-import { DataTypes } from 'sequelize';
-import { DATABASE } from '../config/db_config.js';
 
-const PROJETO = DATABASE.define('relatorio_projetos', {
+import { connection } from '../config/db_config.js';
 
-    id_relatorio: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+export class PROJETOS {
+  constructor() {
+    this.table = "relatorio_projetos";
+  }
 
-    Cliente: {
-        type: DataTypes.STRING,
-        
+  SELECT() {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * FROM ${this.table}`, function (err, result, fields) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
 
-    },
-    Projeto: {
-        type: DataTypes.STRING,
+  SELECT_WHERE(column, value) {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * FROM ${this.table} WHERE ${column} = '${value}'`, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
+  
+  SELECT_WHERE_IN(column,value) {
+    return new Promise((resolve, reject) => {
+      let sql = `SELECT * FROM ${this.table} WHERE ?? IN (?)`;
+        connection.query(sql,[column,value], function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
+  
+  SELECT_WHERE_OR(column1,column2,value) {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * FROM ${this.table} WHERE ${column1} LIKE '%${value}%' OR  ${column2} LIKE '%${value}%'`, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
 
-    },
-    Data_Projeto: {
-        type: DataTypes.DATE,
+  SELECT_COLUMN(column) {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT ${column} FROM ${this.table}`, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
+  
+  ORDER_BY(column,value,order) {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM ${this.table} WHERE ${column} = '${value}' ORDER BY ${order}`, function (err, result) {
+          if (err) throw err;
+          resolve(result);
+        });
+      });
+  }
+  
+  ORDER_BY_WHERE(column,value,order) {
+    return new Promise((resolve, reject) => {
+        var sql = `SELECT * FROM ${this.table} WHERE ?? IN (?) ORDER BY ${order}`
+        connection.query(sql,[column,value], function (err, result) {
+          if (err) throw err;
+          resolve(result);
+        });
+      });
+  }
 
-    },
-    Data_Orcamento: {
-        type: DataTypes.DATE,
 
-    },
-    Vendedor: {
-        type: DataTypes.STRING,
+  INSERT(dados) {
+    return new Promise((resolve, reject) => {
+      let columns = Object.keys(dados).join(', ');
+      let columnValues = Object.values(dados).map(value => `'${value}'`).join(', ');
 
-    },
-    Status_process: {
-        type: DataTypes.STRING,
+      var sql = `INSERT INTO ${this.table} (${columns}) VALUES (${columnValues})`;
+      connection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
 
-    }
-}, {
-    tableName: 'relatorio_projetos',
-    timestamps: false
-});
+  DELETE(column, value) {
+    return new Promise((resolve, reject) => {
+      var sql = `DELETE FROM ${this.table} WHERE ${column} = '${value}'`;
+      connection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
 
-export default PROJETO;
+  UPDATE(column, value, condition, VALUE) {
+    return new Promise((resolve, reject) => {
+      var sql = `UPDATE ${this.table} SET ${column} = '${value}' WHERE ${condition} = '${VALUE}'`;
+      connection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  }
+}

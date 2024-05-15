@@ -2,10 +2,6 @@ const verificarPagina = window.location.pathname.split("/").pop();
 
 import { Section } from './objectCut.js';
 
-
-
-console.log(verificarPagina)
-
 let Estados = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS",
     "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC",
@@ -77,6 +73,7 @@ if (verificarPagina == "SellerRegistration") {
         </form>
 `
 }
+
 
 if (verificarPagina == "CustumerRegistration") {
     body = document.getElementById('main').innerHTML = `
@@ -154,7 +151,6 @@ if (verificarPagina == "CustumerRegistration") {
 }
 
 if (body) {
-
 
     let CPF = document.getElementById('cpf')
     if (CPF) {
@@ -236,7 +232,9 @@ if (body) {
 
 }
 
+
 if (verificarPagina == "Reckons") {
+
     document.getElementById('planCut').addEventListener('click', () => {
         window.location.href = "/Modular/Reckons/CutPlan"
         // window.location.href = "../views/ReckonsCutPlan.html"
@@ -247,6 +245,7 @@ if (verificarPagina == "Reckons") {
     })
 
 }
+
 
 if (verificarPagina === "CutPlan") {
 
@@ -322,6 +321,7 @@ if (verificarPagina === "CutPlan") {
         })
 }
 
+
 if (verificarPagina === "RegisterProject") {
 
     //OBTEM DATA ATUAL FORMATADA
@@ -335,7 +335,7 @@ if (verificarPagina === "RegisterProject") {
         dia = dia < 10 ? '0' + dia : dia;
         mes = mes < 10 ? '0' + mes : mes;
 
-        const dataFormatada = ano + '-' + mes + '-' + dia;
+        const dataFormatada = dia + '-' + mes + '-' + ano;
         console.log(dataFormatada)
         return dataFormatada;
     }
@@ -484,14 +484,132 @@ if (verificarPagina === "RegisterProject") {
 
 }
 
-let htmlContent;
-let idCurrent;
+
+function Filter(DATA) {
+    let content = document.getElementById('content_table')
+    content.innerHTML = '';
+
+    const table = document.querySelector('.tbody_');
+
+    if (verificarPagina === "Projects") {
+
+        DATA.forEach(projeto => {
+            let row = document.createElement('tr');
+            let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
+            row.innerHTML = '<td class="td_">' + projeto.id_relatorio + '</td>' +
+                '<td class="td_">' + projeto.Projeto + '</td>' +
+                '<td class="td_">' + projeto.Cliente + '</td>' +
+                '<td class="td_">' + dataFormatada + '</td>' +
+                '<td class="td_">' + projeto.Vendedor + '</td>' +
+                '<td class="td_">' + projeto.Status_process + '</td>' +
+                '<td class="td_">' +
+                `<i class="bi bi-pencil td_crud" id="${projeto.id_relatorio}" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>` +
+                `<i class="bi bi-box-arrow-down td_crud" data-bs-toggle="tooltip" data-bs-placement="top" title="Visualizar"></i>` +
+                '</td>';
+            table.appendChild(row);
+        })
+    }
+    if (verificarPagina === "BudgetProcessed") {
+        console.log('estou aqui')
+        DATA.forEach(projeto => {
+            let row = document.createElement('tr');
+            let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
+            row.innerHTML = '<td class="td_">' + projeto.id_relatorio + '</td>' +
+                '<td class="td_">' + projeto.Projeto + '</td>' +
+                '<td class="td_">' + projeto.Cliente + '</td>' +
+                '<td class="td_">' + dataFormatada + '</td>' +
+                '<td class="td_">' + projeto.Vendedor + '</td>' +
+                '<td class="td_">' + projeto.Status_process + '</td>'
+
+            table.appendChild(row);
+        })
+    }
+
+
+
+
+
+}
+
+function budgetEdit(DATA) {
+    let htmlContent;
+    const editProcessButtons = document.querySelectorAll('.bi-pencil');
+    editProcessButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+
+
+
+
+            const ID = e.target.id;
+            const projeto = DATA.find(projeto => projeto.id_relatorio == ID);
+            if (projeto) {
+
+                // const nome = projeto.Cliente;
+                // console.log(nome);
+
+
+                fetch('/tableClientes')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        let cpf;
+
+
+                        const cliente = data.find(item => item.Nome === projeto.Cliente);
+                        if (cliente) {
+                            cpf = cliente.CPF;
+                            // console.log(cpf)
+                        } else {
+                            console.log('Cliente não encontrado para o nome', projeto.Cliente);
+                        }
+
+
+
+                        // Lógica para definir htmlContent com base nos dados recebidos
+                        htmlContent = ` <div style="word-spacing: 10px;">
+                            <h1 id="projetoName" class="border-bottom">${projeto.Projeto}</h1><br>
+                            <div><b>CLIENTE:</b> <input id="clienteName" type="text" value="${projeto.Cliente}" 
+                            class="border border-0" readonly style= "text-transform: uppercase;"></div>
+                            
+                            <div><b>CPF:  </b><input type="text" value="${cpf}" class="border border-0" readonly></div>
+                        
+                            <div><b>NºPROJETO:  </b> <input type="text" value="${ID}" class="border border-0" readonly></div>
+                            <br>
+                            </div>
+                            <div style="width:200px";>
+                            <label for="status" class="form-label">Status</label>
+                            <select id="status" class="form-select" name = "status" required>
+                            <option selected>Aberto</option>
+                            <option id="cancel" >Cancelar</option>
+                            <option id="sell">Concluir</option>
+                            </select></div>
+                            <br><br>
+                            `;
+                        localStorage.setItem('htmlContent', htmlContent);
+                        localStorage.setItem('ID', ID);
+
+
+                        if (htmlContent) {
+                            window.open(`Budget-Guide/${ID}`, '_blank', 'width=600,height=1000')
+                        }
+
+                    })
+                    .catch(error => {
+                        console.log('Erro ao carregar os dados', error);
+                    });
+
+            }
+        });
+    });
+}
+
 
 if (verificarPagina === "Projects") {
-    let processAccessed = false;
-    console.log("estou aqui")
+
+    // console.log("estou aqui")
     document.addEventListener('DOMContentLoaded', function () {
         const table = document.querySelector('.tbody_');
+
 
         fetch('/tableProjetos')
             .then(response => response.json())
@@ -502,11 +620,12 @@ if (verificarPagina === "Projects") {
 
                 projetos.forEach(projeto => {
                     let row = document.createElement('tr');
+                    let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
                     row.innerHTML =
                         '<td class="td_">' + projeto.id_relatorio + '</td>' +
                         '<td class="td_">' + projeto.Projeto + '</td>' +
                         '<td class="td_">' + projeto.Cliente + '</td>' +
-                        '<td class="td_">' + projeto.Data_Projeto + '</td>' +
+                        '<td class="td_">' + dataFormatada + '</td>' +
                         '<td class="td_">' + projeto.Vendedor + '</td>' +
                         '<td class="td_">' + projeto.Status_process + '</td>' +
                         '<td class="td_">' +
@@ -514,87 +633,92 @@ if (verificarPagina === "Projects") {
                         `<i class="bi bi-box-arrow-down td_crud" data-bs-toggle="tooltip" data-bs-placement="top" title="Visualizar"></i>` +
                         '</td>';
                     table.appendChild(row);
+
                 });
 
-                const editProcessButtons = document.querySelectorAll('.bi-pencil');
-                editProcessButtons.forEach(button => {
-                    button.addEventListener('click', (e) => {
 
-                        const ID = e.target.id;
-                        const projeto = projetos.find(projeto => projeto.id_relatorio == ID);
-                        if (projeto) {
-
-                            // const nome = projeto.Cliente;
-                            // console.log(nome);
+                budgetEdit(projetos)
 
 
-                            fetch('/tableClientes')
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log(data);
-                                    let cpf;
-                                    const cliente = data.find(item => item.Nome === projeto.Cliente);
-                                    if (cliente) {
-                                        cpf = cliente.CPF;
-                                        console.log(cpf)
-                                    } else {
-                                        console.log('Cliente não encontrado para o nome', projeto.Cliente);
-                                    }
-
-
-
-                                    // Lógica para definir htmlContent com base nos dados recebidos
-                                    htmlContent = ` <div style="word-spacing: 10px;">
-                                                        <h1 class="border-bottom">${projeto.Projeto}</h1><br>
-                                                        <div><b>CLIENTE:</b> <input type="text" value="${projeto.Cliente}" 
-                                                        class="border border-0" readonly style= "text-transform: uppercase;"></div>
-                                                        
-                                                        <div><b>CPF:  </b><input type="text" value="${cpf}" class="border border-0" readonly></div>
-                                                    
-                                                        <div><b>NºPROJETO:  </b> <input type="text" value="${ID}" class="border border-0" readonly></div>
-                                                        <br>
-                                                        </div>
-                                                        <div style="width:200px";>
-                                                        <label for="status" class="form-label">Status</label>
-                                                        <select id="status" class="form-select" name = "status" required>
-                                                        <option selected>Aberto</option>
-                                                        <option id="cancel" >Cancelar</option>
-                                                        <option id="sell">Concluir</option>
-                                                        </select></div>
-                                                        <br><br>
-                                                        `;
-                                    localStorage.setItem('htmlContent', htmlContent);
-                                    localStorage.setItem('ID', ID);
-
-
-                                    if (htmlContent) {
-                                        window.open(`Budget-Guide/${ID}`, '_blank', 'width=600,height=400')
-                                    }
-
-                                })
-                                .catch(error => {
-                                    console.log('Erro ao carregar os dados', error);
-                                });
-
-                        }
-
-                    });
-                });
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
             });
 
-    });
+    })
+
+
+    let filtro = document.getElementById('Filter')
+    document.getElementById('filtrar').addEventListener('click', () => {
+        let selectedOption = filtro.value
+        console.log(selectedOption)
+
+
+        let filtrado;
+        fetch('/filterTable', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filter: selectedOption })
+        })
+            .then(response => {
+                if (response.ok) {
+                    try {
+
+                        console.log('estou aqui')
+                        filtrar()
+
+                    } catch (error) {
+                        console.log('Erro ao carregar os dados', error);
+                    }
+                } else {
+                    throw new Error('Erro ao receber a tabela');
+                }
+            });
+
+        function filtrar() {
+            fetch('/ShowTable')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na solicitação: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Dados recebidos:', data);
+                    Filter(data); // Processar ou exibir os dados filtrados
+                    budgetEdit(data)
+                    console.log('Tabela atualizada');
+                })
+                .catch(error => {
+                    console.log('Erro ao carregar os dados', error);
+                });
+        }
+    })
+    let menuHeader = false
+    document.getElementById('register').addEventListener('click', () => {
+        let menu = document.getElementById('head')
+        if (menuHeader == false) {
+            menu.classList.add('transition-Start-head');
+            menuHeader = true
+        } else {
+            menu.classList.remove('transition-Start-head');
+
+            menuHeader = false
+        }
+    })
+
 
 }
 
-;
 
 const storedID = localStorage.getItem('ID');
+let STATUS = ""
+
 
 if (verificarPagina == storedID) {
-    console.log('estou aqui')
+    // console.log('estou aqui')
     const storedHtmlContent = localStorage.getItem('htmlContent');
 
     const guide = document.getElementById('Guide')
@@ -614,13 +738,14 @@ if (verificarPagina == storedID) {
         }).then((result) => {
 
             if (result.isConfirmed) {
+                STATUS = "cancelado"
 
-                fetch('/canceledOrder', {
+                fetch('/orderStatusChanged', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'text/plain' 
+                        'Content-Type': 'application/json'
                     },
-                    body: storedID
+                    body: JSON.stringify({ id: storedID, status: STATUS })
                 })
                     .then(response => {
                         if (response.ok) {
@@ -646,6 +771,45 @@ if (verificarPagina == storedID) {
         });
     }
 
+    function salvar(payment,value,condition){
+        let projeto = document.getElementById('projetoName').textContent
+        let cliente = document.getElementById('clienteName').value
+        let formaPagamento = payment
+        let valor = value
+        let condicao = condition
+
+        const objeto = { projeto: `${projeto}`,
+                         cliente: `${cliente}`,
+                         formaPagamento: `${formaPagamento}`,
+                         valor: `${valor}`,
+                         condição: `${condicao}` }
+        
+        const jsonString = JSON.stringify(objeto);
+
+        fetch('/saveBudget', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: jsonString
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erro ao enviar a solicitação.');
+            }
+            console.log('Objeto JavaScript foi gravado como JSON com sucesso.');
+          })
+          .catch(error => {
+            console.error('Erro:', error);
+          });
+
+    }
+
+
+
+
+
+
     status.addEventListener('change', function (e) {
         const selectedOption = e.target.value;
 
@@ -653,13 +817,308 @@ if (verificarPagina == storedID) {
             AlertPersonalized()
 
         } else if (selectedOption === 'Concluir') {
-            // console.log('Ola,Mundo')
+
             const pay = document.createElement('div')
-            pay.innerHTML = `<a href="#" id="payment">Adicionar uma forma de pagamento</a>`
+            let formPay = true
+            pay.innerHTML = `<a href="#" id="add_pay" id="payment">Adicionar uma forma de pagamento</a>`
             guide.appendChild(pay)
+
+            let pagamentoAdicionado = false
+            let formPagamentoAdicionado = false
+            
+            if (formPay) {
+                document.getElementById('add_pay').addEventListener('click', () => {
+                    
+                    if(!pagamentoAdicionado){
+
+
+                    const payment = document.createElement('div')
+                    payment.style.marginTop = "50px";
+                    payment.innerHTML = `
+                                                        <label for="payment" class="form-label">Forma de pagamento</label>
+                                                        <select id="type_pay" class="form-select" name = "payment" required>
+                                                        <option selected></option>
+                                                        <option value ="Dinheiro">Dinheiro</option>
+                                                        <option value ="Debito">Cartão de Débito</option>
+                                                        <option value ="Credito">Cartão de Crédito</option>
+                                                        <option value ="PIX">PIX</option>
+                                                        </select></div>
+                                                        `
+                                                        
+                                                        pay.appendChild(payment)
+                                                        
+                                                        pagamentoAdicionado = true
+                                                    }
+                                                    
+                    
+                    
+                                                    let descontoCriado = false
+                                                    let saveCriado = false
+                    
+                    if (pagamentoAdicionado && !formPagamentoAdicionado) {
+                        document.getElementById('type_pay').addEventListener('change', (e) => {
+                            
+                            if(!saveCriado){
+                            let save = document.createElement('button')
+                            save.type = "button";
+                            save.textContent = "Salvar";
+                            save.id = "salvar"
+                            save.style.marginTop="20px"
+                            pay.appendChild(save)
+                            saveCriado = true
+                            }
+                            
+                            let type_payment = e.target.value;
+                            console.log(type_payment)
+
+                            
+                            if (type_payment == "Dinheiro" || type_payment == "Debito") {
+                                
+                                if(!descontoCriado){
+                                    let a = document.createElement('div')
+                                a.style.display="flex"
+                                a.style.justifyContent="space-between"
+                                a.id="pagamento"
+                                
+                                pay.insertBefore(a, pay.lastChild)
+                                
+
+                                let b = document.createElement('div')
+                                a.appendChild(b)
+                                
+                                let label = document.createElement('label')
+                                label.textContent = "Desconto (%)"
+                                label.style.marginRight="10px"
+                                
+                                let desconto = document.createElement('input')
+                                
+                                desconto.id = "desconto"
+                                desconto.style.marginTop = "20px"
+                                desconto.style.width = "50px"
+                                
+                                
+                                b.appendChild(label)
+                                b.appendChild(desconto)
+                                
+                                let c = document.createElement('div')
+                                c.style.display="flex"
+                                c.style.flexDirection="column"
+                                c.style.alignItems="flex-end"
+                                
+                                let v = 20000
+                                let d = 0
+                                
+                                let valorProjeto = document.createElement('div')
+                                valorProjeto.innerHTML = `<span style= "color:grey;">Valor do Projeto:  </span> R$${v} <br>`
+                                valorProjeto.style.marginTop= "20%"
+                                
+                                let valorProjetoDesconto = document.createElement('div')
+                                valorProjetoDesconto.style.marginTop= "5%"
+                                valorProjetoDesconto.style.display="none"
+                                
+                                
+                                
+                                a.appendChild(c)
+                                c.appendChild(valorProjeto)
+                                c.appendChild(valorProjetoDesconto)
+                                
+                                
+                                let condition = "Á vista"
+                                let value;
+                                
+                                if(valorProjeto){
+                                    document.getElementById('desconto').addEventListener('change',(e)=>{
+                                        let descontoAplicado = e.target.value
+                                        console.log(descontoAplicado)
+                                        d = v-((descontoAplicado/100)*v)
+                                        valorProjetoDesconto.innerHTML = `<span style= "color:grey;">Valor com Desconto:</span> R$${d} <br>`
+                                        valorProjetoDesconto.style.display="initial"
+                                        value = d
+                                    })
+                                }
+                                
+                                if(d == 0){
+                                    value = v
+                                }else{value = d }
+                                
+                                document.getElementById('salvar').addEventListener('click',()=>{
+                                    salvar(type_payment,value,condition)
+                                })
+                                
+                                descontoCriado=true
+                            }
+
+
+
+                            } else if (type_payment == "Credito") {
+                                
+                                if(descontoCriado){
+                                    let a = document.getElementById('pagamento')
+                                    a.remove(a)
+                                    descontoCriado=false
+                                }
+                                
+                            } else if (type_payment == "PIX") {
+                                
+                                if(descontoCriado){
+                                    let a = document.getElementById('pagamento')
+                                    a.remove(a)
+                                    descontoCriado=false
+                                }
+                                
+                            }
+                        })
+                        formPagamentoAdicionado = true
+                    }
+                })
+
+
+            }
         }
-    });
-};
+    })
+}
+
+
+
+
+if (verificarPagina == "BudgetProcessed") {
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.querySelector('.tbody_');
+
+        fetch('/budgetProcessed')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Lista de projetos acessada');
+
+                const projetos = data;
+
+                projetos.forEach(projeto => {
+                    let row = document.createElement('tr');
+                    let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
+                    row.innerHTML =
+                        '<td class="td_">' + projeto.id_relatorio + '</td>' +
+                        '<td class="td_">' + projeto.Projeto + '</td>' +
+                        '<td class="td_">' + projeto.Cliente + '</td>' +
+                        '<td class="td_">' + dataFormatada + '</td>' +
+                        '<td class="td_">' + projeto.Vendedor + '</td>' +
+                        '<td class="td_">' + projeto.Status_process + '</td>'
+
+                    table.appendChild(row);
+
+                });
+
+                document.getElementById('filtrar').addEventListener('click', () => {
+
+                    let filtro_Ordem = document.getElementById('Filter')
+                    let selectedOption = filtro_Ordem.value
+                    if (selectedOption == "selected") { selectedOption = false }
+                    console.log(selectedOption)
+                    if (selectedOption) {
+
+                        console.log("aqui")
+
+
+                        fetch('/filterTable', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ filter: selectedOption })
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    try {
+
+                                        console.log('estou aqui')
+                                        filtrar()
+
+                                    } catch (error) {
+                                        console.log('Erro ao carregar os dados', error);
+                                    }
+                                } else {
+                                    throw new Error('Erro ao receber a tabela');
+                                }
+                            });
+
+                        function filtrar() {
+                            fetch('/ShowTableProcessed')
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Erro na solicitação: ' + response.status);
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log('Dados recebidos:', data);
+                                    Filter(data); // Processar ou exibir os dados filtrados
+                                    console.log('Tabela atualizada');
+                                })
+                                .catch(error => {
+                                    console.log('Erro ao carregar os dados', error);
+                                });
+                        }
+
+
+                    } else {
+
+                        let filtro_Nome = document.getElementById('pesquisa')
+                        let nameSearch = filtro_Nome.value
+                        if (nameSearch) {
+
+                            console.log(nameSearch)
+
+                            fetch('/filterTable', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ filter: nameSearch })
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        try {
+
+                                            console.log('estou aqui')
+                                            filtrarPorNome()
+
+                                        } catch (error) {
+                                            console.log('Erro ao carregar os dados', error);
+                                        }
+                                    } else {
+                                        throw new Error('Erro ao receber a tabela');
+                                    }
+                                });
+
+                            function filtrarPorNome() {
+                                fetch('/nameSearch')
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Erro na solicitação: ' + response.status);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        console.log('Dados recebidos:', data);
+                                        Filter(data); // Processar ou exibir os dados filtrados
+                                        console.log('Tabela atualizada');
+                                    })
+                                    .catch(error => {
+                                        console.log('Erro ao carregar os dados', error);
+                                    });
+                            }
+                        }
+                    }
+
+
+                })
+
+
+            })
+    })
+
+
+}
 
 
 
