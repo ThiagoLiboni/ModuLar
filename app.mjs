@@ -54,7 +54,8 @@ app.use(express.text());
 app.use(bodyParser.urlencoded({ extended: true })); // Permite a requisição de arrays e objetos
 app.use(bodyParser.json()); // Lida com JSON, como tipo de requisição 
 
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 //ROTAS GET PARA REDIRECIONAMENTO 
 app.get('/Authentication', router);
