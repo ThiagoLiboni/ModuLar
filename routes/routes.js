@@ -59,6 +59,9 @@ const router = express.Router();
   router.get('/Modular/BudgetProcessed', (req, res) => {
     res.sendFile(path.join(__dirname, "../views/Reckons/budgetProcessed.html"))
   });
+  router.get('/Modular/Budget', (req, res) => {
+    res.sendFile(path.join(__dirname, "../views/Reckons/Register/budget.html"))
+  });
   
   router.get("/Modular/Reckons", async (req, res) => {
     res.sendFile(path.join(__dirname, "../views/Reckons/ReckonsHome.html"))

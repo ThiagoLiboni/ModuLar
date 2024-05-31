@@ -5,16 +5,10 @@ require 'json'
 require 'ostruct'
 require 'bridge.rb'
 require 'csv'
-<<<<<<< HEAD
+
 # require 'msql2'
 # require 'active_record'
 
-
-
-
-=======
-require_relative 'connection_db.rb'
->>>>>>> 8f85b745bc4cbe8235b653883a2c9b364434ce45
 
 
 module Modular
@@ -91,7 +85,6 @@ module Modular
     end
     
 
-<<<<<<< HEAD
 
     # Gera arquivo de tabela com informações do modelo e dimensões do componente 
     def self.exportTable
@@ -109,58 +102,7 @@ module Modular
             csv << ["",dado[:elemento], dado[:comprimento], dado[:largura], dado[:espessura], dado[:grupo]]
           end
         end
-      end
-=======
-   def self.exportTable
-    if @@path
-      csv_file_path = 'dados_componentes.csv'
-      CSV.open(csv_file_path, 'wb', col_sep: ';') do |csv|
-        # Escreve a primeira linha da tabela
-        csv << ["Projeto", "Elemento", "Comprimento", "Largura", "Espessura"]
-      
-        # Escreve a segunda linha apenas com o resultado de self.get_file_js
-        csv << [self.get_filename_js]
-      
-        # Itera sobre os dados e escreve as linhas subsequentes da tabela
-        @@dados.each do |dado|
-          csv << ["",dado[:elemento], dado[:comprimento], dado[:largura], dado[:espessura]]
-        end
-      end
-      dados_csv = CSV.read(csv_file_path, headers: true, col_sep: ';')
-      Connection_DB.insert_data_into_db(@@dados)
-      Connection_DB.replace_table_data(@@dados)
-
-    end    
-    puts "Dados exportados com sucesso: #{csv_file_path}"
-    
-  end
-
-    
-
-    def self.auto_start
-      self.home_toolbar
-      self.start_node_server
-      self.home_html_dialog
-    end
-
-    # inicia uma sessão com servidor Node
-    def self.start_node_server
-        # Verifique se o servidor Node.js já está em execução
-        
-        if @node_server_pid.nil? || !Process.kill(0, @node_server_pid)
-          # Inicie o servidor Node.js em segundo plano
-          auth_login_mjs_path = File.join(__dir__, 'app.mjs')
-          @node_server_pid = spawn('node', auth_login_mjs_path)
-          
-          # Aguarde um momento para garantir que o servidor esteja pronto
-          sleep(2)
-        end
-    end
-
-    # cria um ambiente de interação com HTML
-    def self.home_html_dialog
->>>>>>> 8f85b745bc4cbe8235b653883a2c9b364434ce45
-      
+      end      
       puts "Dados exportados para o arquivo CSV com sucesso: #{csv_file_path}"
     end
 
@@ -201,12 +143,10 @@ module Modular
           end
     end
     
-<<<<<<< HEAD
+    
     # retorna o nome do projeto atual
     def self.get_file_js
-=======
-    def self.get_filename_js
->>>>>>> 8f85b745bc4cbe8235b653883a2c9b364434ce45
+
       @@path
     end
     

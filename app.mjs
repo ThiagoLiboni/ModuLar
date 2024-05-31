@@ -2,8 +2,11 @@
 import router from './routes/routes.js';
 import routes_app from './routes/routes_app.js';
 
+
 import dotenv from 'dotenv';
 dotenv.config();
+
+
 
 import path from 'path';
 import { dirname} from 'path';
@@ -19,7 +22,7 @@ import multer from 'multer';
 import bodyParser from 'body-parser';
 
 import os from 'os';
-import { stringify } from 'querystring';
+
 
 
 
@@ -28,34 +31,58 @@ let port = process.env.PORT || 3000;
 // export const username = os.userInfo().username;
 
 const app = express();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const upload = multer();// Lidar com processamento de informações do fomrulário
 
 
-//CONECTAR AO BANCO DE DADOS
+
+//CONECTAR DB MYSQL
 connection.connect(function(err) {
   if (err) throw err
   console.log('Connected')
   
 });
 
-  
+app.use(express.text());
+app.use(bodyParser.urlencoded({ extended: true })); // Permite a requisição de arrays e objetos
+app.use(bodyParser.json()); // Lida com JSON, como tipo de requisição 
+
+
 //LIDA COM O PROCESSO DE CONFIG STYLE
 app.use(express.static('su_modular'));
 app.use('/public', express.static(path.join(__dirname, '/public'), { extensions: ['css'] }));
 app.use('/public', express.static(path.join(__dirname, '/public'), { extensions: ['png', 'jpg'] }));
 app.use('/js', express.static(path.join(__dirname, '/js'), { extensions: ['js'] }));
+app.use('/fb', express.static(path.join(__dirname, '/fb'), { extensions: ['js'] }));
 app.use('/Storage', express.static(path.join(__dirname, 'Storage')));
-
-
-app.use(express.text());
-app.use(bodyParser.urlencoded({ extended: true })); // Permite a requisição de arrays e objetos
-app.use(bodyParser.json()); // Lida com JSON, como tipo de requisição 
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+
+
+
+let UserID 
+console.log(UserID)
+app.post('/Auth', async(req, res) => {
+ try{
+    const data = req.body
+    UserID = data
+    console.log(UserID);
+
+  
+    res.sendStatus(200)
+  }catch(err) {
+    res.status(500).send(err)}
+});
+
+
+
+
+
 
 //ROTAS GET PARA REDIRECIONAMENTO 
 app.get('/Authentication', router);
@@ -72,6 +99,8 @@ app.get('/Modular/Projects', router);
 app.get('/Modular/Budget-Guide/:id',router);
 app.get('/Modular/BudgetProcessed', router);
 app.get("/Modular/Reckons", router);
+app.get("/Modular/Budget", router);
+app.get("/Modular/Budget", router);
 
 
 // EFETUAR O DOWNLOAD DOS COMPONENTES PARA PASTA LOCAL
@@ -85,6 +114,9 @@ app.post('/SaveTex', routes_app);
 
 //SALVAR NOVAS TEXTURAS
 app.post('/saveBudget', routes_app);
+
+//SALVAR NOVAS TEXTURAS
+app.post('/generate-PDF', routes_app);
 
 
 //CADASTRAR NOVO VENDEDOR
@@ -102,7 +134,7 @@ app.post('/Vendedor', upload.none(), async (req, res) => { //Upload.none() ==== 
       Cidade: data.cidade,
       Estado: data.estado
     }
-    const vendedor = await new VENDEDOR()
+    const vendedor = await new VENDEDOR(UserID)
     vendedor.INSERT(Seller);// Inserir o novo usuário no banco de dados
     
     // console.log(`Dados recebidos: Vendedor: ${Seller.Nome}`)
@@ -129,12 +161,12 @@ app.post('/Cliente', upload.none(), async (req, res) => { //Upload.none() ==== I
       Nome: data.nome,
       Contato: data.phone,
       Email: data.email,
-      Endereço: endereco,
+      Endereco: endereco,
       Cidade: data.cidade,
       Estado: data.estado
     };
 
-    const cliente =  new CLIENTE();
+    const cliente =  new CLIENTE(UserID);
     await cliente.INSERT(Client)// Inserir o novo usuário no banco de dados
 
     // console.log(`Dados recebidos: Cliente: ${Client.Nome}`)
@@ -160,13 +192,13 @@ app.post('/Projetos', upload.none(), async (req, res) => { //Upload.none() ==== 
 
     const projetos = {
       Cliente: cliente,
-      Projeto: nome_projeto,
+      Nome_Projeto: nome_projeto,
       Data_Projeto: data_projeto,
       Data_Orcamento: data_final,
       Vendedor: vendedor,
-      Status_process: 'Aberto'
+      Status_Processo: 'Aberto'
     }
-    const PROJETO =  new PROJETOS();
+    const PROJETO =  new PROJETOS(UserID);
     await PROJETO.INSERT(projetos);// Inserir o novo usuário no banco de dados
 
     // console.log(`Dados recebidos: Projeto: ${projetos.Projeto},  Cliente: ${projetos.Cliente}`)
@@ -187,10 +219,10 @@ app.get('/catchNames', async (req, res) => {
   try {
     const NOME =  "Nome"
 
-    const nomes_clientes =  new CLIENTE();
+    const nomes_clientes =  new CLIENTE(UserID);
     const Cliente = await nomes_clientes.SELECT_COLUMN(NOME)
     
-    const nomes_vendedores =  new VENDEDOR();
+    const nomes_vendedores =  new VENDEDOR(UserID);
     const Vendedor = await nomes_vendedores.SELECT_COLUMN(NOME)
 
     // Agrupe os dados em um objeto
@@ -211,10 +243,11 @@ app.get('/catchNames', async (req, res) => {
 app.get('/tableProjetos', async (req, res) => {
 
     try {
-      const column = "Status_process";
+      const column = "Status_Processo";
       const value = "Aberto"
-      
-      const projetos = new PROJETOS();
+      console.log(UserID)  
+      const projetos = new PROJETOS(UserID);
+    
       
       const data = await projetos.SELECT_WHERE(column,value);
       
@@ -231,10 +264,10 @@ app.get('/tableProjetos', async (req, res) => {
     
     try {
       
-    const column = "Status_process";
+    const column = "Status_Processo";
     const value = ["Cancelado","Concluido"];
 
-    const projetos = new PROJETOS();
+    const projetos = new PROJETOS(UserID);
 
     const data = await projetos.SELECT_WHERE_IN(column,value);
     
@@ -253,7 +286,7 @@ app.get('/tableClientes', async (req, res) => {
   try {
 
 
-    const cliente = new CLIENTE()
+    const cliente = new CLIENTE(UserID)
 
     const data = await cliente.SELECT();
 
@@ -266,12 +299,13 @@ app.get('/tableClientes', async (req, res) => {
 
 app.post('/orderStatusChanged', async (req, res) => {
   try {
-    const column_status = "Status_process";
-    const column_id = "id_relatorio";
+    const column_status = "Status_Processo";
+    const column_id = "id_Projetos";
     const ID = req.body.id
     const status = req.body.status
+  
 
-    const projetos = new PROJETOS();
+    const projetos = new PROJETOS(UserID);
     const budget = await projetos.UPDATE(column_status,status,column_id,ID)
 
     res.status(200).send('Status atualizado com sucesso!');
@@ -298,10 +332,10 @@ app.post('/orderStatusChanged', async (req, res) => {
 app.get('/ShowTable', async (req, res) => {
   try {
     const option = optionFilter
-    const column_status = "Status_process";
+    const column_status = "Status_Processo";
     const column_value = "Aberto";
-    const projetos = new PROJETOS();
-    const filteredData = await projetos.ORDER_BY(column_status, column_value, option); // Use optionFilter para filtrar os dados
+    const projetos = new PROJETOS(UserID);
+    const filteredData = await projetos.ORDER_BY(column_status, column_value, option); 
     res.json(filteredData);
   } catch (error) {
     console.error('Erro ao obter os dados filtrados:', error);
@@ -313,10 +347,10 @@ app.get('/ShowTable', async (req, res) => {
 app.get('/ShowTableProcessed', async (req, res) => {
   try {
     const option = optionFilter
-    const column_status = "Status_process";
+    const column_status = "Status_Processo";
     const column_value = ["Concluido","Cancelado"];
-    const projetos = new PROJETOS();
-    const filteredData = await projetos.ORDER_BY_WHERE(column_status, column_value, option); // Use optionFilter para filtrar os dados
+    const projetos = new PROJETOS(UserID);
+    const filteredData = await projetos.ORDER_BY_WHERE(column_status, column_value, option); 
     res.json(filteredData);
   } catch (error) {
     console.error('Erro ao obter os dados filtrados:', error);
@@ -329,7 +363,7 @@ app.get('/nameSearch', async (req, res) => {
     const value = optionFilter
     const column1 = ["Cliente"];
     const column2 = ["Vendedor"];
-    const projetos = new PROJETOS();
+    const projetos = new PROJETOS(UserID);
     const filteredData = await projetos.SELECT_WHERE_OR(column1,column2,value); // Use optionFilter para filtrar os dados
     res.json(filteredData);
   } catch (error) {

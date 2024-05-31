@@ -1,5 +1,24 @@
 const verificarPagina = window.location.pathname.split("/").pop();
 
+localStorage.setItem('userID', 'SyzDcAldfteL9vclQWyN5Zcnx2i1')
+const USER = localStorage.getItem('userID')
+
+fetch('/Auth', 
+    {
+    method:'POST',
+    content: 'application/text',
+    body: USER
+})
+.then(response=>{
+    if(response.ok){
+        console.log(USER)
+    }
+})
+.catch(error=>{console.log('Usuário não identificado',error)})
+
+
+
+
 import { Section } from './objectCut.js';
 
 let Estados = [
@@ -335,7 +354,7 @@ if (verificarPagina === "RegisterProject") {
         dia = dia < 10 ? '0' + dia : dia;
         mes = mes < 10 ? '0' + mes : mes;
 
-        const dataFormatada = dia + '-' + mes + '-' + ano;
+        const dataFormatada = ano + '-' + mes + '-' + dia;
         console.log(dataFormatada)
         return dataFormatada;
     }
@@ -434,16 +453,16 @@ if (verificarPagina === "RegisterProject") {
             // Por exemplo, você pode adicionar os nomes dos clientes a um elemento HTML
             listaClientes.forEach(cliente => {
                 const option = document.createElement('option');
-                option.value = cliente;
-                option.textContent = cliente;
+                option.value = cliente.Nome;
+                option.textContent = cliente.Nome;
                 clientes.appendChild(option);
             });
 
             // E você pode fazer o mesmo para os vendedores
             listaVendedores.forEach(vendedor => {
                 const option = document.createElement('option');
-                option.value = vendedor;
-                option.textContent = vendedor;
+                option.value = vendedor.Nome;
+                option.textContent = vendedor.Nome;
                 vendedores.appendChild(option);
             });
         })
@@ -496,12 +515,12 @@ function Filter(DATA) {
         DATA.forEach(projeto => {
             let row = document.createElement('tr');
             let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
-            row.innerHTML = '<td class="td_">' + projeto.id_relatorio + '</td>' +
-                '<td class="td_">' + projeto.Projeto + '</td>' +
+            row.innerHTML = '<td class="td_">' + projeto.id_Projetos + '</td>' +
+                '<td class="td_">' + projeto.Nome_Projeto + '</td>' +
                 '<td class="td_">' + projeto.Cliente + '</td>' +
                 '<td class="td_">' + dataFormatada + '</td>' +
                 '<td class="td_">' + projeto.Vendedor + '</td>' +
-                '<td class="td_">' + projeto.Status_process + '</td>' +
+                '<td class="td_">' + projeto.Status_Processo + '</td>' +
                 '<td class="td_">' +
                 `<i class="bi bi-pencil td_crud" id="${projeto.id_relatorio}" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>` +
                 `<i class="bi bi-box-arrow-down td_crud" data-bs-toggle="tooltip" data-bs-placement="top" title="Visualizar"></i>` +
@@ -514,12 +533,12 @@ function Filter(DATA) {
         DATA.forEach(projeto => {
             let row = document.createElement('tr');
             let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
-            row.innerHTML = '<td class="td_">' + projeto.id_relatorio + '</td>' +
-                '<td class="td_">' + projeto.Projeto + '</td>' +
+            row.innerHTML = '<td class="td_">' + projeto.id_Projetos + '</td>' +
+                '<td class="td_">' + projeto.Nome_Projeto + '</td>' +
                 '<td class="td_">' + projeto.Cliente + '</td>' +
                 '<td class="td_">' + dataFormatada + '</td>' +
                 '<td class="td_">' + projeto.Vendedor + '</td>' +
-                '<td class="td_">' + projeto.Status_process + '</td>'
+                '<td class="td_">' + projeto.Status_Processo + '</td>'
 
             table.appendChild(row);
         })
@@ -541,7 +560,7 @@ function budgetEdit(DATA) {
 
 
             const ID = e.target.id;
-            const projeto = DATA.find(projeto => projeto.id_relatorio == ID);
+            const projeto = DATA.find(projeto => projeto.id_Projetos == ID);
             if (projeto) {
 
                 // const nome = projeto.Cliente;
@@ -567,7 +586,7 @@ function budgetEdit(DATA) {
 
                         // Lógica para definir htmlContent com base nos dados recebidos
                         htmlContent = ` <div style="word-spacing: 10px;">
-                            <h1 id="projetoName" class="border-bottom">${projeto.Projeto}</h1><br>
+                            <h1 id="projetoName" class="border-bottom">${projeto.Nome_Projeto}</h1><br>
                             <div><b>CLIENTE:</b> <input id="clienteName" type="text" value="${projeto.Cliente}" 
                             class="border border-0" readonly style= "text-transform: uppercase;"></div>
                             
@@ -590,7 +609,7 @@ function budgetEdit(DATA) {
 
 
                         if (htmlContent) {
-                            window.open(`Budget-Guide/${ID}`, '_blank', 'width=600,height=1000')
+                            window.location.href = (`/Modular/Budget-Guide/${ID}`)
                         }
 
                     })
@@ -602,6 +621,17 @@ function budgetEdit(DATA) {
         });
     });
 }
+
+function generatePDF() {
+    const pdfButtons = document.querySelectorAll('.bi-box-arrow-down');
+
+    pdfButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            window.open('/Modular/Budget', '_blank');
+        })
+    })
+}
+
 
 
 if (verificarPagina === "Projects") {
@@ -622,22 +652,27 @@ if (verificarPagina === "Projects") {
                     let row = document.createElement('tr');
                     let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
                     row.innerHTML =
-                        '<td class="td_">' + projeto.id_relatorio + '</td>' +
-                        '<td class="td_">' + projeto.Projeto + '</td>' +
+                        '<td class="td_">' + projeto.id_Projetos + '</td>' +
+                        '<td class="td_">' + projeto.Nome_Projeto + '</td>' +
                         '<td class="td_">' + projeto.Cliente + '</td>' +
                         '<td class="td_">' + dataFormatada + '</td>' +
                         '<td class="td_">' + projeto.Vendedor + '</td>' +
-                        '<td class="td_">' + projeto.Status_process + '</td>' +
+                        '<td class="td_">' + projeto.Status_Processo + '</td>' +
                         '<td class="td_">' +
-                        `<i class="bi bi-pencil td_crud" id="${projeto.id_relatorio}" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>` +
+                        `<i class="bi bi-pencil td_crud" id="${projeto.id_Projetos}" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"></i>` +
                         `<i class="bi bi-box-arrow-down td_crud" data-bs-toggle="tooltip" data-bs-placement="top" title="Visualizar"></i>` +
                         '</td>';
+
                     table.appendChild(row);
+
+
+
 
                 });
 
-
+                generatePDF()
                 budgetEdit(projetos)
+
 
 
             })
@@ -779,6 +814,8 @@ if (verificarPagina == storedID) {
     function salvar(payment, value, condition) {
         let projeto = document.getElementById('projetoName').textContent
         let cliente = document.getElementById('clienteName').value
+        localStorage.setItem('NomeCliente', cliente)
+        localStorage.setItem('NomeProjeto', projeto)
         let formaPagamento = payment
         let valor = value
         let condicao = condition
@@ -802,9 +839,14 @@ if (verificarPagina == storedID) {
         })
             .then(response => {
                 if (!response.ok) {
+                    alert("Erro ao enviar os dados")
                     throw new Error('Erro ao enviar a solicitação.');
+
+                } else {
+                    console.log('Objeto JavaScript foi gravado como JSON com sucesso.');
+                    alert("Dados salvo com sucesso")
+                    setTimeout(() => { window.close() }, 1000)
                 }
-                console.log('Objeto JavaScript foi gravado como JSON com sucesso.');
             })
             .catch(error => {
                 console.error('Erro:', error);
@@ -837,7 +879,7 @@ if (verificarPagina == storedID) {
             if (formPay) {
                 document.getElementById('add_pay').addEventListener('click', () => {
 
-                //CRIA A ESTRUTURA DE FORMAS DE PAGAMENTO E EXIBE NA TELA
+                    //CRIA A ESTRUTURA DE FORMAS DE PAGAMENTO E EXIBE NA TELA
 
                     if (!pagamentoAdicionado) {
 
@@ -863,6 +905,8 @@ if (verificarPagina == storedID) {
 
 
                     let descontoCriado = false
+                    let parcelasCriadas = false
+                    let pixCriado = false
                     let saveCriado = false
 
 
@@ -877,6 +921,7 @@ if (verificarPagina == storedID) {
                                 save.textContent = "Salvar";
                                 save.id = "salvar"
                                 save.style.marginTop = "20px"
+                                save.style.width = "80px"
                                 pay.appendChild(save)
                                 saveCriado = true
                             }
@@ -886,6 +931,15 @@ if (verificarPagina == storedID) {
 
 
                             if (type_payment == "Dinheiro" || type_payment == "Debito") {
+
+                                if (parcelasCriadas) {
+                                    document.getElementById('parcelamento').remove()
+                                    parcelasCriadas = false
+                                }
+                                if (pixCriado) {
+                                    document.getElementById('pix').remove()
+                                    pixCriado = false
+                                }
 
                                 if (!descontoCriado) {
                                     let a = document.createElement('div')
@@ -936,7 +990,7 @@ if (verificarPagina == storedID) {
                                     c.appendChild(valorProjetoDesconto)
 
 
-                                    let condition = "Á vista"
+                                    let condition = "Á vista (s/ desconto)"
                                     let value;
 
                                     if (valorProjeto) {
@@ -947,12 +1001,15 @@ if (verificarPagina == storedID) {
                                             valorProjetoDesconto.innerHTML = `<span style= "color:grey;">Valor com Desconto:</span> R$${d} <br>`
                                             valorProjetoDesconto.style.display = "initial"
                                             value = d
+                                            condition = "Á vista " + `(${descontoAplicado}% off)`
                                         })
                                     }
 
                                     if (d == 0) {
                                         value = v
-                                    } else { value = d }
+                                    } else {
+                                        value = d
+                                    }
 
                                     document.getElementById('salvar').addEventListener('click', () => {
                                         salvar(type_payment, value, condition)
@@ -962,22 +1019,101 @@ if (verificarPagina == storedID) {
                                 }
 
 
-
                             } else if (type_payment == "Credito") {
 
                                 if (descontoCriado) {
-                                    let a = document.getElementById('pagamento')
-                                    a.remove(a)
+                                    document.getElementById('pagamento').remove()
                                     descontoCriado = false
+                                }
+                                let v = 20000
+                                let value = v
+                                let condition;
+
+
+
+                                if (!parcelasCriadas) {
+
+                                    let a = document.createElement('div')
+                                    a.style.display = "flex"
+                                    a.style.justifyContent = "space-between"
+                                    a.style.height = "50px"
+                                    a.style.alignItems = "end"
+                                    a.id = "parcelamento"
+
+
+                                    let b = document.createElement('select')
+                                    b.id = "parcelas"
+                                    b.style.width = "150px"
+                                    b.style.marginTop = "20px"
+
+                                    pay.insertBefore(a, pay.lastChild)
+                                    a.appendChild(b)
+
+
+
+
+                                    function formatarNumero(numero) {
+                                        var partes = numero.toFixed(2).split('.');
+                                        partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                        return partes.join(',');
+                                    }
+
+                                    for (let i = 1; i <= 12; i++) {
+                                        let option = document.createElement('option');
+                                        option.id = "parcela" + i
+                                        let parcela = (v / i)
+                                        var formattedNumber = formatarNumero(parcela)
+                                        option.textContent = i + "x R$" + formattedNumber
+                                        console.log(formattedNumber)
+                                        b.appendChild(option);
+
+                                    }
+
+                                    let valorProjeto = document.createElement('div')
+                                    valorProjeto.innerHTML = `<span style= "color:grey;">Valor do Projeto:  </span> R$${v} <br>`
+                                    valorProjeto.style.marginTop = "20%"
+
+                                    a.appendChild(valorProjeto)
+
+
+                                    let optionSelected = false
+                                    document.getElementById('parcelas').addEventListener('change', (e) => {
+                                        console.log('estou aqui')
+                                        condition = e.target.value;
+                                        console.log(condition)
+                                        optionSelected = true
+                                    })
+
+
+
+                                    document.getElementById('salvar').addEventListener('click', () => {
+
+                                        if (!optionSelected) {
+                                            condition = document.getElementById('parcela1').textContent
+                                            console.log(condition)
+                                            salvar(type_payment, value, condition)
+                                        } else {
+                                            salvar(type_payment, value, condition)
+
+                                        }
+                                    })
+                                    parcelasCriadas = true
                                 }
 
                             } else if (type_payment == "PIX") {
 
+                                if (parcelasCriadas) {
+                                    console.log("removido aqui")
+                                    document.getElementById('parcelamento').remove();
+                                    parcelasCriadas = false
+                                }
+
                                 if (descontoCriado) {
-                                    let a = document.getElementById('pagamento')
-                                    a.remove(a)
+                                    document.getElementById('pagamento').remove()
                                     descontoCriado = false
                                 }
+
+
 
                             }
                         })
@@ -1010,12 +1146,12 @@ if (verificarPagina == "BudgetProcessed") {
                     let row = document.createElement('tr');
                     let dataFormatada = new Date(projeto.Data_Projeto).toISOString().split("T")[0]
                     row.innerHTML =
-                        '<td class="td_">' + projeto.id_relatorio + '</td>' +
-                        '<td class="td_">' + projeto.Projeto + '</td>' +
+                        '<td class="td_">' + projeto.id_Projetos + '</td>' +
+                        '<td class="td_">' + projeto.Nome_Projeto + '</td>' +
                         '<td class="td_">' + projeto.Cliente + '</td>' +
                         '<td class="td_">' + dataFormatada + '</td>' +
                         '<td class="td_">' + projeto.Vendedor + '</td>' +
-                        '<td class="td_">' + projeto.Status_process + '</td>'
+                        '<td class="td_">' + projeto.Status_Processo + '</td>'
 
                     table.appendChild(row);
 
@@ -1025,9 +1161,9 @@ if (verificarPagina == "BudgetProcessed") {
 
                     let filtro_Ordem = document.getElementById('Filter')
                     let selectedOption = filtro_Ordem.value
-                    if (selectedOption == "selected") { selectedOption = false }
+                    if (selectedOption != "id_Projetos"){
+
                     console.log(selectedOption)
-                    if (selectedOption) {
 
                         console.log("aqui")
 
@@ -1052,6 +1188,7 @@ if (verificarPagina == "BudgetProcessed") {
                                 } else {
                                     throw new Error('Erro ao receber a tabela');
                                 }
+                    
                             });
 
                         function filtrar() {
@@ -1073,7 +1210,7 @@ if (verificarPagina == "BudgetProcessed") {
                         }
 
 
-                    } else {
+                    }else{
 
                         let filtro_Nome = document.getElementById('pesquisa')
                         let nameSearch = filtro_Nome.value
